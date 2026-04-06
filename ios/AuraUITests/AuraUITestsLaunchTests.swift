@@ -15,8 +15,8 @@ final class AuraUITestsLaunchTests: XCTestCase {
 
         // Take a screenshot of the launch screen for the test report.
         let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name           = "Launch Screen"
-        attachment.lifetime       = .keepAlways
+        attachment.name = "Launch Screen"
+        attachment.lifetime = .keepAlways
         add(attachment)
     }
 }

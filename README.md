@@ -10,7 +10,9 @@
 |---|---|
 | **Stress** | Daily stress level (0 – 10) |
 | **Sleep** | Duration, quality, type (night sleep / nap) |
-| **Migraine** | Type, intensity, side, symptoms, triggers |
+| **Migraine** | Area, intensity, symptoms, triggers |
+| **Headache** | Type (tension/cluster/other), area, intensity, symptoms, triggers |
+| **Headache Symptoms** | Prodrome / postdrome symptom entries |
 | **Medication** | Name, dosage, time taken, preventive flag |
 | **Activity** | Type, intensity, duration |
 | **Food** | Meal type, items, time eaten |
