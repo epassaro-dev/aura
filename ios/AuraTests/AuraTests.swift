@@ -4,6 +4,7 @@ import SwiftData
 
 // MARK: - Base test case with in-memory SwiftData container
 
+@MainActor
 class AuraTestCase: XCTestCase {
     var modelContainer: ModelContainer!
     var modelContext: ModelContext { modelContainer.mainContext }

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct ActivityLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel

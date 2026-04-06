@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// One-tap entry point: a grid of category buttons that each open the relevant log sheet.
 struct QuickLogView: View {
