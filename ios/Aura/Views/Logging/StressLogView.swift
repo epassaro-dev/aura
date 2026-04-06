@@ -59,3 +59,12 @@ struct StressLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    StressLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

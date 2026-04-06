@@ -39,6 +39,12 @@
 		1134446EBB82F9CF92468DC3 /* DailyLogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5410BA758C284CE965178DC3 /* DailyLogViewModelTests.swift */; };
 		297184AADD9107217F8BEF1C /* AuraUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9E85C5124AA2B2AA4A4E1A /* AuraUITests.swift */; };
 		CB8285A539141537E3DE97DD /* AuraUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F2AD8ACF057634D4A87EE8 /* AuraUITestsLaunchTests.swift */; };
+		AABB0002CCDD0001EEFF0001 /* HeadacheEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0001CCDD0001EEFF0001 /* HeadacheEpisode.swift */; };
+		AABB0004CCDD0001EEFF0001 /* HeadacheSymptomEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0003CCDD0001EEFF0001 /* HeadacheSymptomEntry.swift */; };
+		AABB0006CCDD0001EEFF0001 /* CustomSymptom.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0005CCDD0001EEFF0001 /* CustomSymptom.swift */; };
+		AABB0008CCDD0001EEFF0001 /* HeadacheEpisodeLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0007CCDD0001EEFF0001 /* HeadacheEpisodeLogView.swift */; };
+		AABB000ACCDD0001EEFF0001 /* HeadacheSymptomLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0009CCDD0001EEFF0001 /* HeadacheSymptomLogView.swift */; };
+		AABB000CCCDD0001EEFF0001 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB000BCCDD0001EEFF0001 /* PreviewData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +100,12 @@
 		5410BA758C284CE965178DC3 /* DailyLogViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLogViewModelTests.swift; sourceTree = "<group>"; };
 		2F9E85C5124AA2B2AA4A4E1A /* AuraUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraUITests.swift; sourceTree = "<group>"; };
 		45F2AD8ACF057634D4A87EE8 /* AuraUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		AABB0001CCDD0001EEFF0001 /* HeadacheEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheEpisode.swift; sourceTree = "<group>"; };
+		AABB0003CCDD0001EEFF0001 /* HeadacheSymptomEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheSymptomEntry.swift; sourceTree = "<group>"; };
+		AABB0005CCDD0001EEFF0001 /* CustomSymptom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSymptom.swift; sourceTree = "<group>"; };
+		AABB0007CCDD0001EEFF0001 /* HeadacheEpisodeLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheEpisodeLogView.swift; sourceTree = "<group>"; };
+		AABB0009CCDD0001EEFF0001 /* HeadacheSymptomLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheSymptomLogView.swift; sourceTree = "<group>"; };
+		AABB000BCCDD0001EEFF0001 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +158,7 @@
 			children = (
 				6B02506E7604DD49E764BE97 /* AuraApp.swift */,
 				F8CC17A67F4E7A46534EF8B5 /* ContentView.swift */,
+				AABB000BCCDD0001EEFF0001 /* PreviewData.swift */,
 				C297C903274B1787C0453915 /* Assets.xcassets */,
 				849E4FBCB3714C27F1E17372 /* Models */,
 				A3F07EA8D48FACF59D1AB3CA /* ViewModels */,
@@ -166,6 +179,9 @@
 				40EFA3A098D7610E4E9D29CC /* FoodEntry.swift */,
 				9C2BC9944A1B2B1936D09177 /* Note.swift */,
 				E4784033E691DC9C675E091D /* MigraineEpisode.swift */,
+				AABB0001CCDD0001EEFF0001 /* HeadacheEpisode.swift */,
+				AABB0003CCDD0001EEFF0001 /* HeadacheSymptomEntry.swift */,
+				AABB0005CCDD0001EEFF0001 /* CustomSymptom.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -203,6 +219,8 @@
 				BE9EE4499796D730AA2FF1C5 /* FoodLogView.swift */,
 				0E1BA6F0188EE485AEDFFD82 /* NoteLogView.swift */,
 				89E83D9829B0DDE65B1F6B56 /* MigraineEpisodeLogView.swift */,
+				AABB0007CCDD0001EEFF0001 /* HeadacheEpisodeLogView.swift */,
+				AABB0009CCDD0001EEFF0001 /* HeadacheSymptomLogView.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -374,6 +392,7 @@
 			files = (
 				2BB7EF3756F60ED3EB88E84C /* AuraApp.swift in Sources */,
 				9EDC38D2C8CCB222E9DCFE9E /* ContentView.swift in Sources */,
+				AABB000CCCDD0001EEFF0001 /* PreviewData.swift in Sources */,
 				F96BF9BBED5644630196F2B4 /* DailyLog.swift in Sources */,
 				7848CC0AD993D92E2C22F8C5 /* SleepEntry.swift in Sources */,
 				EEAF24870AEFFB3C359088B1 /* MedicationEntry.swift in Sources */,
@@ -381,6 +400,9 @@
 				89AF7C4F0D74AA85086DD8EA /* FoodEntry.swift in Sources */,
 				1D4FBA97FFEB055BEAE6FAEB /* Note.swift in Sources */,
 				5D0D1A0301533BF42EDDCC05 /* MigraineEpisode.swift in Sources */,
+				AABB0002CCDD0001EEFF0001 /* HeadacheEpisode.swift in Sources */,
+				AABB0004CCDD0001EEFF0001 /* HeadacheSymptomEntry.swift in Sources */,
+				AABB0006CCDD0001EEFF0001 /* CustomSymptom.swift in Sources */,
 				4EA2451ED18E54FC92D088D4 /* DailyLogViewModel.swift in Sources */,
 				77A473BB27F0568AC2DA1E19 /* SettingsViewModel.swift in Sources */,
 				1D2A75A055D272ECD7040A3F /* SecurityViewModel.swift in Sources */,
@@ -396,6 +418,8 @@
 				6DCC1B2CB43847E14A04020B /* FoodLogView.swift in Sources */,
 				9DA3E9E7068B8763C21C4046 /* NoteLogView.swift in Sources */,
 				6379B84A309E94E8336AE357 /* MigraineEpisodeLogView.swift in Sources */,
+				AABB0008CCDD0001EEFF0001 /* HeadacheEpisodeLogView.swift in Sources */,
+				AABB000ACCDD0001EEFF0001 /* HeadacheSymptomLogView.swift in Sources */,
 				33DA84EAE4500042A6864421 /* NotificationService.swift in Sources */,
 				DA0CA93D38AB3DFF3C5870A6 /* SecurityService.swift in Sources */,
 			);

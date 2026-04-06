@@ -130,10 +130,9 @@ final class DailyLogViewModelTests: AuraTestCase {
         let episode = MigraineEpisode(
             startTime: .now,
             intensity: 8,
-            type:      .migraine,
-            side:      .right,
-            symptoms:  [MigraineSymptom.nausea.rawValue, MigraineSymptom.aura.rawValue],
-            triggers:  ["Stress", "Bright light"]
+            area: .right,
+            symptoms: [MigraineSymptom.nausea.rawValue, MigraineSymptom.aura.rawValue],
+            triggers: ["Stress", "Bright light"]
         )
         viewModel.addMigraineEpisode(episode)
         XCTAssertEqual(viewModel.currentLog?.migraineEpisodes.count, 1)
@@ -142,12 +141,82 @@ final class DailyLogViewModelTests: AuraTestCase {
     }
 
     func testDeleteMigraineEpisode() {
-        let episode = MigraineEpisode(startTime: .now, intensity: 5, type: .migraine, side: .left)
+        let episode = MigraineEpisode(startTime: .now, intensity: 5, area: .left)
         viewModel.addMigraineEpisode(episode)
         XCTAssertEqual(viewModel.currentLog?.migraineEpisodes.count, 1)
 
         viewModel.deleteMigraineEpisode(episode)
         XCTAssertEqual(viewModel.currentLog?.migraineEpisodes.count, 0)
+    }
+
+    // MARK: - Headache episode
+
+    func testAddHeadacheEpisode() {
+        let episode = HeadacheEpisode(
+            type: .tensionHeadache,
+            area: .bilateral,
+            intensity: 4,
+            startTime: .now,
+            symptoms: [],
+            triggers: ["Poor posture"]
+        )
+        viewModel.addHeadacheEpisode(episode)
+        XCTAssertEqual(viewModel.currentLog?.headacheEpisodes.count, 1)
+        XCTAssertEqual(viewModel.currentLog?.headacheEpisodes.first?.type, .tensionHeadache)
+    }
+
+    func testDeleteHeadacheEpisode() {
+        let episode = HeadacheEpisode(type: .cluster, area: .left, intensity: 7)
+        viewModel.addHeadacheEpisode(episode)
+        XCTAssertEqual(viewModel.currentLog?.headacheEpisodes.count, 1)
+
+        viewModel.deleteHeadacheEpisode(episode)
+        XCTAssertEqual(viewModel.currentLog?.headacheEpisodes.count, 0)
+    }
+
+    // MARK: - Headache symptom entry
+
+    func testAddHeadacheSymptomEntry() {
+        let entry = HeadacheSymptomEntry(
+            phase: .prodrome,
+            symptoms: [MigraineSymptom.aura.rawValue, MigraineSymptom.fatigue.rawValue],
+            notes: "Felt very tired before the migraine"
+        )
+        viewModel.addHeadacheSymptomEntry(entry)
+        XCTAssertEqual(viewModel.currentLog?.headacheSymptomEntries.count, 1)
+        XCTAssertEqual(viewModel.currentLog?.headacheSymptomEntries.first?.phase, .prodrome)
+        XCTAssertEqual(viewModel.currentLog?.headacheSymptomEntries.first?.symptoms.count, 2)
+    }
+
+    func testDeleteHeadacheSymptomEntry() {
+        let entry = HeadacheSymptomEntry(phase: .postdrome, symptoms: [MigraineSymptom.fatigue.rawValue])
+        viewModel.addHeadacheSymptomEntry(entry)
+        XCTAssertEqual(viewModel.currentLog?.headacheSymptomEntries.count, 1)
+
+        viewModel.deleteHeadacheSymptomEntry(entry)
+        XCTAssertEqual(viewModel.currentLog?.headacheSymptomEntries.count, 0)
+    }
+
+    // MARK: - Custom symptoms
+
+    func testAddCustomSymptom() {
+        let symptom = CustomSymptom(name: "Visual Snow")
+        viewModel.addCustomSymptom(symptom)
+
+        let descriptor = FetchDescriptor<CustomSymptom>()
+        let all = try? modelContext.fetch(descriptor)
+        XCTAssertEqual(all?.count, 1)
+        XCTAssertEqual(all?.first?.name, "Visual Snow")
+    }
+
+    func testDeleteCustomSymptom() {
+        let symptom = CustomSymptom(name: "Tingling")
+        viewModel.addCustomSymptom(symptom)
+
+        viewModel.deleteCustomSymptom(symptom)
+        let descriptor = FetchDescriptor<CustomSymptom>()
+        let all = try? modelContext.fetch(descriptor)
+        XCTAssertEqual(all?.count, 0)
     }
 
     // MARK: - No error on save

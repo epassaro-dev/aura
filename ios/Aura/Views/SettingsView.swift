@@ -1,10 +1,14 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @EnvironmentObject private var settingsViewModel: SettingsViewModel
     @EnvironmentObject private var securityViewModel: SecurityViewModel
-    @State private var notificationsAuthorised = false
-    @State private var showingPermissionAlert  = false
+    @Query(sort: \CustomSymptom.name) private var customSymptoms: [CustomSymptom]
+    @Environment(\.modelContext) private var modelContext
+
+    @State private var showingPermissionAlert = false
+    @State private var newSymptomName = ""
 
     var body: some View {
         NavigationStack {
@@ -12,33 +16,61 @@ struct SettingsView: View {
                 // MARK: Reminders
                 Section {
                     reminderRow(
-                        title:   "Preventive Medication",
-                        icon:    "pill.fill",
+                        title: "Preventive Medication",
+                        icon: "pill.fill",
                         enabled: $settingsViewModel.medicationReminderEnabled,
-                        time:    $settingsViewModel.medicationReminderTime
+                        time: $settingsViewModel.medicationReminderTime
                     )
                     reminderRow(
-                        title:   "Morning Log (Sleep)",
-                        icon:    "sunrise.fill",
+                        title: "Morning Log (Sleep)",
+                        icon: "sunrise.fill",
                         enabled: $settingsViewModel.morningReminderEnabled,
-                        time:    $settingsViewModel.morningReminderTime
+                        time: $settingsViewModel.morningReminderTime
                     )
                     reminderRow(
-                        title:   "Evening Log",
-                        icon:    "moon.fill",
+                        title: "Evening Log",
+                        icon: "moon.fill",
                         enabled: $settingsViewModel.eveningReminderEnabled,
-                        time:    $settingsViewModel.eveningReminderTime
+                        time: $settingsViewModel.eveningReminderTime
                     )
                     reminderRow(
-                        title:   "Bedtime",
-                        icon:    "bed.double.fill",
+                        title: "Bedtime",
+                        icon: "bed.double.fill",
                         enabled: $settingsViewModel.bedtimeReminderEnabled,
-                        time:    $settingsViewModel.bedtimeReminderTime
+                        time: $settingsViewModel.bedtimeReminderTime
                     )
                 } header: {
                     Text("Reminders")
                 } footer: {
                     Text("Reminders repeat daily at the selected time.")
+                }
+
+                // MARK: Custom Symptoms
+                Section {
+                    ForEach(customSymptoms) { symptom in
+                        Text(symptom.name)
+                    }
+                    .onDelete { indices in
+                        for index in indices {
+                            modelContext.delete(customSymptoms[index])
+                        }
+                        try? modelContext.save()
+                    }
+
+                    HStack {
+                        TextField("New symptom name…", text: $newSymptomName)
+                            .autocorrectionDisabled()
+                            .onSubmit { addCustomSymptom() }
+                        Button(action: addCustomSymptom) {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(.indigo)
+                        }
+                        .disabled(newSymptomName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                } header: {
+                    Text("Custom Symptoms")
+                } footer: {
+                    Text("Custom symptoms appear alongside built-in options when logging migraine and headache episodes.")
                 }
 
                 // MARK: Security
@@ -47,7 +79,6 @@ struct SettingsView: View {
                         Label("Require Face ID / Passcode", systemImage: "faceid")
                     }
                     .onChange(of: settingsViewModel.securityEnabled) { _, enabled in
-                        // Sync to securityViewModel immediately
                         if !enabled { securityViewModel.isLocked = false }
                     }
                 } header: {
@@ -59,12 +90,13 @@ struct SettingsView: View {
                 // MARK: About
                 Section("About") {
                     LabeledContent("Version", value: appVersion)
-                    LabeledContent("Build",   value: buildNumber)
+                    LabeledContent("Build", value: buildNumber)
                 }
             }
             .navigationTitle("Settings")
             .task {
-                notificationsAuthorised = (try? await settingsViewModel.requestNotificationPermission()) ?? false
+                let granted = await settingsViewModel.requestNotificationPermission()
+                if !granted { showingPermissionAlert = true }
             }
             .alert("Notifications Disabled", isPresented: $showingPermissionAlert) {
                 Button("Open Settings") {
@@ -83,10 +115,10 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func reminderRow(
-        title:   String,
-        icon:    String,
+        title: String,
+        icon: String,
         enabled: Binding<Bool>,
-        time:    Binding<Date>
+        time: Binding<Date>
     ) -> some View {
         VStack(spacing: 0) {
             Toggle(isOn: enabled) {
@@ -105,10 +137,30 @@ struct SettingsView: View {
 
     // MARK: - Helpers
 
+    private func addCustomSymptom() {
+        let name = newSymptomName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        let symptom = CustomSymptom(name: name)
+        modelContext.insert(symptom)
+        try? modelContext.save()
+        newSymptomName = ""
+    }
+
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "–"
     }
+
     private var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "–"
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    SettingsView()
+        .environmentObject(SettingsViewModel())
+        .environmentObject(SecurityViewModel())
+        .modelContainer(ModelContainer.preview)
+}
+

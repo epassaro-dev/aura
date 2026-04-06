@@ -19,7 +19,7 @@ final class DailyLogViewModel: ObservableObject {
     // MARK: - Fetch / Create
 
     func fetchOrCreateTodaysLog() {
-        let today      = Calendar.current.startOfDay(for: .now)
+        let today = Calendar.current.startOfDay(for: .now)
         let descriptor = FetchDescriptor<DailyLog>(
             predicate: #Predicate { $0.date == today }
         )
@@ -90,6 +90,25 @@ final class DailyLogViewModel: ObservableObject {
         save()
     }
 
+    func addHeadacheEpisode(_ episode: HeadacheEpisode) {
+        guard let log = currentLog else { return }
+        episode.dailyLog = log
+        log.headacheEpisodes.append(episode)
+        save()
+    }
+
+    func addHeadacheSymptomEntry(_ entry: HeadacheSymptomEntry) {
+        guard let log = currentLog else { return }
+        entry.dailyLog = log
+        log.headacheSymptomEntries.append(entry)
+        save()
+    }
+
+    func addCustomSymptom(_ symptom: CustomSymptom) {
+        modelContext.insert(symptom)
+        save()
+    }
+
     // MARK: - Delete entries
 
     func deleteSleepEntry(_ entry: SleepEntry) {
@@ -128,6 +147,23 @@ final class DailyLogViewModel: ObservableObject {
         save()
     }
 
+    func deleteHeadacheEpisode(_ episode: HeadacheEpisode) {
+        currentLog?.headacheEpisodes.removeAll { $0.persistentModelID == episode.persistentModelID }
+        modelContext.delete(episode)
+        save()
+    }
+
+    func deleteHeadacheSymptomEntry(_ entry: HeadacheSymptomEntry) {
+        currentLog?.headacheSymptomEntries.removeAll { $0.persistentModelID == entry.persistentModelID }
+        modelContext.delete(entry)
+        save()
+    }
+
+    func deleteCustomSymptom(_ symptom: CustomSymptom) {
+        modelContext.delete(symptom)
+        save()
+    }
+
     // MARK: - Persist
 
     private func save() {
@@ -138,3 +174,4 @@ final class DailyLogViewModel: ObservableObject {
         }
     }
 }
+

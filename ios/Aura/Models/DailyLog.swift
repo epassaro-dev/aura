@@ -28,7 +28,16 @@ final class DailyLog {
     @Relationship(deleteRule: .cascade)
     var migraineEpisodes: [MigraineEpisode] = []
 
+    /// Non-migraine headaches (tension, cluster, etc.).
+    @Relationship(deleteRule: .cascade)
+    var headacheEpisodes: [HeadacheEpisode] = []
+
+    /// Prodrome or postdrome symptom entries logged on days surrounding a migraine.
+    @Relationship(deleteRule: .cascade)
+    var headacheSymptomEntries: [HeadacheSymptomEntry] = []
+
     init(date: Date = Calendar.current.startOfDay(for: .now)) {
         self.date = date
     }
 }
+

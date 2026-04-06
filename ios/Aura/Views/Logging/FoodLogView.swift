@@ -4,11 +4,11 @@ struct FoodLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var mealType:   MealType = .breakfast
-    @State private var newItem:    String   = ""
-    @State private var items:      [String] = []
-    @State private var eatenAt:    Date     = .now
-    @State private var notes:      String   = ""
+    @State private var mealType: MealType = .breakfast
+    @State private var newItem: String = ""
+    @State private var items: [String] = []
+    @State private var eatenAt: Date = .now
+    @State private var notes: String = ""
 
     var body: some View {
         NavigationStack {
@@ -73,9 +73,9 @@ struct FoodLogView: View {
             Button("Save") {
                 let entry = FoodEntry(
                     mealType: mealType,
-                    items:    items,
-                    eatenAt:  eatenAt,
-                    notes:    notes
+                    items: items,
+                    eatenAt: eatenAt,
+                    notes: notes
                 )
                 viewModel.addFoodEntry(entry)
                 dismiss()
@@ -83,3 +83,12 @@ struct FoodLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    FoodLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

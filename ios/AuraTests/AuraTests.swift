@@ -6,7 +6,7 @@ import SwiftData
 
 class AuraTestCase: XCTestCase {
     var modelContainer: ModelContainer!
-    var modelContext:   ModelContext { modelContainer.mainContext }
+    var modelContext: ModelContext { modelContainer.mainContext }
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -18,6 +18,9 @@ class AuraTestCase: XCTestCase {
             FoodEntry.self,
             Note.self,
             MigraineEpisode.self,
+            HeadacheEpisode.self,
+            HeadacheSymptomEntry.self,
+            CustomSymptom.self,
         ])
         modelContainer = try ModelContainer(
             for: schema,
@@ -30,3 +33,4 @@ class AuraTestCase: XCTestCase {
         try super.tearDownWithError()
     }
 }
+

@@ -59,6 +59,10 @@ private struct HistoryRowView: View {
                     Label("\(log.migraineEpisodes.count)", systemImage: "bolt.fill")
                         .foregroundStyle(.red)
                 }
+                if !log.headacheEpisodes.isEmpty {
+                    Label("\(log.headacheEpisodes.count)", systemImage: "waveform.path.ecg")
+                        .foregroundStyle(.orange)
+                }
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -97,13 +101,44 @@ struct DailyLogDetailView: View {
 
             // Migraine
             if !log.migraineEpisodes.isEmpty {
-                Section("Headache / Migraine") {
+                Section("Migraine") {
                     ForEach(log.migraineEpisodes) { ep in
                         VStack(alignment: .leading) {
-                            Label("\(ep.type.rawValue) – Intensity \(ep.intensity)/10",
+                            Label("\(ep.area.rawValue) – Intensity \(ep.intensity)/10",
                                   systemImage: "bolt.fill")
                             if !ep.symptoms.isEmpty {
                                 Text(ep.symptoms.joined(separator: ", "))
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Headache Episodes
+            if !log.headacheEpisodes.isEmpty {
+                Section("Headache") {
+                    ForEach(log.headacheEpisodes) { ep in
+                        VStack(alignment: .leading) {
+                            Label("\(ep.type.rawValue) – Intensity \(ep.intensity)/10",
+                                  systemImage: "waveform.path.ecg")
+                            if !ep.symptoms.isEmpty {
+                                Text(ep.symptoms.joined(separator: ", "))
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Headache Symptom Entries
+            if !log.headacheSymptomEntries.isEmpty {
+                Section("Headache Symptoms") {
+                    ForEach(log.headacheSymptomEntries) { entry in
+                        VStack(alignment: .leading) {
+                            Label(entry.phase.rawValue, systemImage: entry.phase.systemImage)
+                            if !entry.symptoms.isEmpty {
+                                Text(entry.symptoms.joined(separator: ", "))
                                     .font(.caption).foregroundStyle(.secondary)
                             }
                         }
@@ -168,3 +203,18 @@ struct DailyLogDetailView: View {
         return f.string(from: log.date)
     }
 }
+
+// MARK: - Preview
+
+#Preview("History – empty") {
+    HistoryView()
+        .modelContainer(ModelContainer.preview)
+}
+
+#Preview("History – with data") {
+    let container = ModelContainer.preview
+    return HistoryView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(container)
+}
+

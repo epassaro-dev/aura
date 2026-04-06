@@ -74,3 +74,11 @@ struct LockScreenView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    LockScreenView()
+        .environmentObject(SecurityViewModel())
+}
+

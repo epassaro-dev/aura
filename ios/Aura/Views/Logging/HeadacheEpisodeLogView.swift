@@ -1,11 +1,12 @@
 import SwiftUI
 import SwiftData
 
-struct MigraineEpisodeLogView: View {
+struct HeadacheEpisodeLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \CustomSymptom.name) private var customSymptoms: [CustomSymptom]
 
+    @State private var type: HeadacheType = .tensionHeadache
     @State private var area: HeadacheArea = .unspecified
     @State private var intensity: Double = 5
     @State private var startTime: Date = .now
@@ -15,12 +16,16 @@ struct MigraineEpisodeLogView: View {
     @State private var triggerText: String = ""
     @State private var triggers: [String] = []
     @State private var notes: String = ""
-    @State private var newCustomSymptomName: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Location") {
+                Section("Type & Location") {
+                    Picker("Type", selection: $type) {
+                        ForEach(HeadacheType.allCases, id: \.self) { t in
+                            Text(t.rawValue).tag(t)
+                        }
+                    }
                     Picker("Area", selection: $area) {
                         ForEach(HeadacheArea.allCases, id: \.self) { a in
                             Text(a.rawValue).tag(a)
@@ -50,20 +55,16 @@ struct MigraineEpisodeLogView: View {
                     }
                 }
 
-                Section {
-                    ForEach(MigraineSymptom.allCases, id: \.self) { symptom in
-                        symptomToggle(name: symptom.rawValue)
-                    }
-                    if !customSymptoms.isEmpty {
-                        Divider()
+                if !customSymptoms.isEmpty {
+                    Section {
                         ForEach(customSymptoms) { symptom in
                             symptomToggle(name: symptom.name)
                         }
+                    } header: {
+                        Text("Symptoms")
+                    } footer: {
+                        Text("Add new symptom types in Settings.")
                     }
-                } header: {
-                    Text("Symptoms")
-                } footer: {
-                    Text("Add new symptom types in Settings.")
                 }
 
                 Section {
@@ -88,7 +89,7 @@ struct MigraineEpisodeLogView: View {
                         .lineLimit(3...)
                 }
             }
-            .navigationTitle("Log Migraine")
+            .navigationTitle("Log Headache")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
         }
@@ -127,16 +128,17 @@ struct MigraineEpisodeLogView: View {
         }
         ToolbarItem(placement: .confirmationAction) {
             Button("Save") {
-                let episode = MigraineEpisode(
-                    startTime: startTime,
-                    intensity: Int(intensity),
+                let episode = HeadacheEpisode(
+                    type: type,
                     area: area,
+                    intensity: Int(intensity),
+                    startTime: startTime,
                     symptoms: Array(selectedSymptoms),
                     triggers: triggers,
                     notes: notes
                 )
                 if !isOngoing { episode.endTime = endTime }
-                viewModel.addMigraineEpisode(episode)
+                viewModel.addHeadacheEpisode(episode)
                 dismiss()
             }
         }
@@ -146,8 +148,7 @@ struct MigraineEpisodeLogView: View {
 // MARK: - Preview
 
 #Preview {
-    MigraineEpisodeLogView()
+    HeadacheEpisodeLogView()
         .environmentObject(DailyLogViewModel.preview)
         .modelContainer(ModelContainer.preview)
 }
-

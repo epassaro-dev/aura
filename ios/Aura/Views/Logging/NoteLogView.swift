@@ -36,3 +36,12 @@ struct NoteLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    NoteLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

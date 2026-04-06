@@ -1,46 +1,45 @@
 import Foundation
 import SwiftData
 
-enum HeadacheSide: String, Codable, CaseIterable {
-    case left        = "Left"
-    case right       = "Right"
-    case bilateral   = "Both Sides"
+/// The location of head pain. Covers all common pain areas including top and back.
+enum HeadacheArea: String, Codable, CaseIterable {
+    case left = "Left"
+    case right = "Right"
+    case bilateral = "Both Sides"
+    case top = "Top"
+    case back = "Back / Occipital"
     case unspecified = "Unspecified"
 }
 
-enum HeadacheType: String, Codable, CaseIterable {
-    case migraine        = "Migraine"
-    case tensionHeadache = "Tension Headache"
-    case cluster         = "Cluster Headache"
-    case other           = "Other"
-}
-
-/// Common migraine symptoms; stored as raw String values in MigraineEpisode.
+/// Built-in migraine symptoms. Users can additionally define custom symptoms via `CustomSymptom`.
 enum MigraineSymptom: String, Codable, CaseIterable {
-    case aura             = "Aura"
-    case nausea           = "Nausea"
-    case vomiting         = "Vomiting"
+    case aura = "Aura"
+    case nausea = "Nausea"
+    case vomiting = "Vomiting"
     case lightSensitivity = "Light Sensitivity"
     case soundSensitivity = "Sound Sensitivity"
     case smellSensitivity = "Smell Sensitivity"
-    case dizziness        = "Dizziness"
-    case fatigue          = "Fatigue"
-    case neckStiffness    = "Neck Stiffness"
+    case dizziness = "Dizziness"
+    case fatigue = "Fatigue"
+    case neckStiffness = "Neck Stiffness"
 }
 
+/// A migraine episode — a specific, medically-defined event with a clear start (and optional end).
+/// Non-migraine headaches are tracked separately via `HeadacheEpisode`.
+/// Warning (prodrome) and recovery (postdrome) symptoms that appear on other days
+/// are logged via `HeadacheSymptomEntry` on their respective `DailyLog`.
 @Model
 final class MigraineEpisode {
     var startTime: Date
-    var endTime:   Date?
+    var endTime: Date?
     /// Pain intensity 1 (mild) – 10 (unbearable).
     var intensity: Int
-    var type:      HeadacheType
-    var side:      HeadacheSide
-    /// Raw values of MigraineSymptom.
-    var symptoms:  [String]
+    var area: HeadacheArea
+    /// Raw values of `MigraineSymptom` or `CustomSymptom.name`.
+    var symptoms: [String]
     /// Free-text trigger descriptions.
-    var triggers:  [String]
-    var notes:     String
+    var triggers: [String]
+    var notes: String
 
     var dailyLog: DailyLog?
 
@@ -51,28 +50,26 @@ final class MigraineEpisode {
 
     var durationFormatted: String? {
         guard let d = duration else { return nil }
-        let total   = Int(d)
-        let hours   = total / 3600
+        let total = Int(d)
+        let hours = total / 3600
         let minutes = (total % 3600) / 60
         if hours > 0 { return "\(hours)h \(minutes)m" }
         return "\(minutes)m"
     }
 
     init(
-        startTime: Date        = .now,
-        intensity: Int         = 5,
-        type:      HeadacheType  = .migraine,
-        side:      HeadacheSide  = .unspecified,
-        symptoms:  [String]    = [],
-        triggers:  [String]    = [],
-        notes:     String      = ""
+        startTime: Date = .now,
+        intensity: Int = 5,
+        area: HeadacheArea = .unspecified,
+        symptoms: [String] = [],
+        triggers: [String] = [],
+        notes: String = ""
     ) {
         self.startTime = startTime
         self.intensity = intensity
-        self.type      = type
-        self.side      = side
-        self.symptoms  = symptoms
-        self.triggers  = triggers
-        self.notes     = notes
+        self.area = area
+        self.symptoms = symptoms
+        self.triggers = triggers
+        self.notes = notes
     }
 }

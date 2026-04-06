@@ -21,6 +21,8 @@ struct HomeView: View {
                             StressSummaryCard(log: log)
                             SleepSummaryCard(log: log)
                             MigraineSummaryCard(log: log)
+                            HeadacheEpisodeSummaryCard(log: log)
+                            HeadacheSymptomSummaryCard(log: log)
                             MedicationSummaryCard(log: log)
                             ActivitySummaryCard(log: log)
                             FoodSummaryCard(log: log)
@@ -97,21 +99,18 @@ private struct EmptyDayView: View {
 // MARK: - Summary Cards
 
 private struct SummaryCard<Content: View>: View {
-    let title:       String
+    let title: String
     let systemImage: String
-    let content:     Content
-    var destination: AnyView?
+    let content: Content
 
     init(
-        title:       String,
+        title: String,
         systemImage: String,
-        destination: AnyView? = nil,
         @ViewBuilder content: () -> Content
     ) {
-        self.title       = title
+        self.title = title
         self.systemImage = systemImage
-        self.destination = destination
-        self.content     = content()
+        self.content = content()
     }
 
     var body: some View {
@@ -201,12 +200,49 @@ private struct MigraineSummaryCard: View {
     @State private var showingLog = false
 
     var body: some View {
-        SummaryCard(title: "Headache / Migraine", systemImage: "bolt.fill") {
+        SummaryCard(title: "Migraine", systemImage: "bolt.fill") {
             if log.migraineEpisodes.isEmpty {
                 addButton { showingLog = true }
             } else {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(log.migraineEpisodes) { ep in
+                        HStack {
+                            Text(ep.area.rawValue)
+                                .font(.subheadline)
+                            Spacer()
+                            Text("Intensity \(ep.intensity)/10")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Button("Add more") { showingLog = true }
+                    .font(.subheadline)
+                    .foregroundStyle(.indigo)
+                    .padding(.top, 2)
+            }
+        }
+        .sheet(isPresented: $showingLog) {
+            MigraineEpisodeLogView()
+                .environmentObject(viewModel)
+        }
+    }
+}
+
+// MARK: Headache Episode
+
+private struct HeadacheEpisodeSummaryCard: View {
+    let log: DailyLog
+    @EnvironmentObject private var viewModel: DailyLogViewModel
+    @State private var showingLog = false
+
+    var body: some View {
+        SummaryCard(title: "Headache", systemImage: "waveform.path.ecg") {
+            if log.headacheEpisodes.isEmpty {
+                addButton { showingLog = true }
+            } else {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(log.headacheEpisodes) { ep in
                         HStack {
                             Text(ep.type.rawValue)
                                 .font(.subheadline)
@@ -224,7 +260,46 @@ private struct MigraineSummaryCard: View {
             }
         }
         .sheet(isPresented: $showingLog) {
-            MigraineEpisodeLogView()
+            HeadacheEpisodeLogView()
+                .environmentObject(viewModel)
+        }
+    }
+}
+
+// MARK: Headache Symptoms (Prodrome / Postdrome)
+
+private struct HeadacheSymptomSummaryCard: View {
+    let log: DailyLog
+    @EnvironmentObject private var viewModel: DailyLogViewModel
+    @State private var showingLog = false
+
+    var body: some View {
+        SummaryCard(title: "Headache Symptoms", systemImage: "exclamationmark.triangle.fill") {
+            if log.headacheSymptomEntries.isEmpty {
+                addButton { showingLog = true }
+            } else {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(log.headacheSymptomEntries) { entry in
+                        HStack {
+                            Image(systemName: entry.phase.systemImage)
+                                .foregroundStyle(.orange)
+                            Text(entry.phase.rawValue)
+                                .font(.subheadline)
+                            Spacer()
+                            Text("\(entry.symptoms.count) symptom(s)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Button("Add more") { showingLog = true }
+                    .font(.subheadline)
+                    .foregroundStyle(.indigo)
+                    .padding(.top, 2)
+            }
+        }
+        .sheet(isPresented: $showingLog) {
+            HeadacheSymptomLogView()
                 .environmentObject(viewModel)
         }
     }
@@ -379,3 +454,13 @@ private func addButton(action: @escaping () -> Void) -> some View {
             .foregroundStyle(.indigo)
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    let container = ModelContainer.preview
+    return HomeView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(container)
+}
+

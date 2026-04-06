@@ -4,10 +4,10 @@ struct ActivityLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var type:            ActivityType      = .walking
-    @State private var intensity:       ActivityIntensity = .moderate
-    @State private var durationMinutes: Double            = 30
-    @State private var notes:           String            = ""
+    @State private var type: ActivityType = .walking
+    @State private var intensity: ActivityIntensity = .moderate
+    @State private var durationMinutes: Double = 30
+    @State private var notes: String = ""
 
     var body: some View {
         NavigationStack {
@@ -62,10 +62,10 @@ struct ActivityLogView: View {
         ToolbarItem(placement: .confirmationAction) {
             Button("Save") {
                 let entry = ActivityEntry(
-                    type:            type,
-                    intensity:       intensity,
+                    type: type,
+                    intensity: intensity,
                     durationMinutes: Int(durationMinutes),
-                    notes:           notes
+                    notes: notes
                 )
                 viewModel.addActivityEntry(entry)
                 dismiss()
@@ -73,3 +73,12 @@ struct ActivityLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    ActivityLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

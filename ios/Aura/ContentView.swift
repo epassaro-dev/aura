@@ -25,3 +25,13 @@ struct ContentView: View {
         .tint(.indigo)
     }
 }
+
+#Preview {
+    let container = ModelContainer.preview
+    return ContentView()
+        .environmentObject(DailyLogViewModel.preview)
+        .environmentObject(SettingsViewModel())
+        .environmentObject(SecurityViewModel())
+        .modelContainer(container)
+}
+

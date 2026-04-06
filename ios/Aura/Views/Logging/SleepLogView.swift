@@ -4,11 +4,11 @@ struct SleepLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var type:      SleepType    = .night
-    @State private var quality:   SleepQuality = .average
+    @State private var type: SleepType = .night
+    @State private var quality: SleepQuality = .average
     @State private var startTime: Date = Calendar.current.date(byAdding: .hour, value: -8, to: .now) ?? .now
-    @State private var endTime:   Date = .now
-    @State private var notes:     String = ""
+    @State private var endTime: Date = .now
+    @State private var notes: String = ""
 
     var body: some View {
         NavigationStack {
@@ -24,11 +24,11 @@ struct SleepLogView: View {
 
                 Section("Duration") {
                     DatePicker("Start", selection: $startTime, displayedComponents: [.date, .hourAndMinute])
-                    DatePicker("End",   selection: $endTime,   displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("End", selection: $endTime, displayedComponents: [.date, .hourAndMinute])
 
                     let dur = max(0, endTime.timeIntervalSince(startTime))
-                    let h   = Int(dur) / 3600
-                    let m   = (Int(dur) % 3600) / 60
+                    let h = Int(dur) / 3600
+                    let m = (Int(dur) % 3600) / 60
                     HStack {
                         Text("Duration")
                         Spacer()
@@ -66,10 +66,10 @@ struct SleepLogView: View {
             Button("Save") {
                 let entry = SleepEntry(
                     startTime: startTime,
-                    endTime:   endTime,
-                    quality:   quality,
-                    type:      type,
-                    notes:     notes
+                    endTime: endTime,
+                    quality: quality,
+                    type: type,
+                    notes: notes
                 )
                 viewModel.addSleepEntry(entry)
                 dismiss()
@@ -78,3 +78,12 @@ struct SleepLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    SleepLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

@@ -6,9 +6,9 @@ struct AuraApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     // ViewModels created at app level so the ModelContext is available immediately.
-    @StateObject private var dailyLogViewModel:  DailyLogViewModel
-    @StateObject private var settingsViewModel:  SettingsViewModel
-    @StateObject private var securityViewModel:  SecurityViewModel
+    @StateObject private var dailyLogViewModel: DailyLogViewModel
+    @StateObject private var settingsViewModel: SettingsViewModel
+    @StateObject private var securityViewModel: SecurityViewModel
 
     let modelContainer: ModelContainer
 
@@ -22,8 +22,11 @@ struct AuraApp: App {
                 FoodEntry.self,
                 Note.self,
                 MigraineEpisode.self,
+                HeadacheEpisode.self,
+                HeadacheSymptomEntry.self,
+                CustomSymptom.self,
             ])
-            let config    = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
             let container = try ModelContainer(for: schema, configurations: [config])
             modelContainer = container
 
@@ -59,3 +62,4 @@ struct AuraApp: App {
         }
     }
 }
+

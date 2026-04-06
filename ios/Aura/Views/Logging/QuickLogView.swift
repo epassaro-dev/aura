@@ -5,13 +5,15 @@ struct QuickLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var showStress    = false
-    @State private var showSleep     = false
-    @State private var showMigraine  = false
+    @State private var showStress = false
+    @State private var showSleep = false
+    @State private var showMigraine = false
+    @State private var showHeadache = false
+    @State private var showHeadacheSymptom = false
     @State private var showMedication = false
-    @State private var showActivity  = false
-    @State private var showFood      = false
-    @State private var showNote      = false
+    @State private var showActivity = false
+    @State private var showFood = false
+    @State private var showNote = false
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -21,43 +23,55 @@ struct QuickLogView: View {
                 LazyVGrid(columns: columns, spacing: 16) {
                     categoryButton(
                         title: "Stress",
-                        icon:  "brain.head.profile",
+                        icon: "brain.head.profile",
                         color: .purple
                     ) { showStress = true }
 
                     categoryButton(
                         title: "Sleep",
-                        icon:  "moon.fill",
+                        icon: "moon.fill",
                         color: .indigo
                     ) { showSleep = true }
 
                     categoryButton(
                         title: "Migraine",
-                        icon:  "bolt.fill",
+                        icon: "bolt.fill",
                         color: .red
                     ) { showMigraine = true }
 
                     categoryButton(
+                        title: "Headache",
+                        icon: "waveform.path.ecg",
+                        color: .orange
+                    ) { showHeadache = true }
+
+                    categoryButton(
+                        title: "Headache Symptoms",
+                        icon: "exclamationmark.triangle.fill",
+                        color: .yellow
+                    ) { showHeadacheSymptom = true }
+
+                    categoryButton(
                         title: "Medication",
-                        icon:  "pill.fill",
+                        icon: "pill.fill",
                         color: .teal
                     ) { showMedication = true }
 
                     categoryButton(
                         title: "Activity",
-                        icon:  "figure.run",
+                        icon: "figure.run",
                         color: .green
                     ) { showActivity = true }
 
                     categoryButton(
                         title: "Food",
-                        icon:  "fork.knife",
-                        color: .orange
+                        icon: "fork.knife",
+                        color: .brown
                     ) { showFood = true }
 
                     categoryButton(
                         title: "Note",
-                        icon:  "note.text",
+                        icon: "note.text",
                         color: .blue
                     ) { showNote = true }
                 }
@@ -72,19 +86,21 @@ struct QuickLogView: View {
                 }
             }
         }
-        .sheet(isPresented: $showStress)    { StressLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showSleep)     { SleepLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showMigraine)  { MigraineEpisodeLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showMedication){ MedicationLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showActivity)  { ActivityLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showFood)      { FoodLogView().environmentObject(viewModel) }
-        .sheet(isPresented: $showNote)      { NoteLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showStress) { StressLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showSleep) { SleepLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showMigraine) { MigraineEpisodeLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showHeadache) { HeadacheEpisodeLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showHeadacheSymptom) { HeadacheSymptomLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showMedication) { MedicationLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showActivity) { ActivityLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showFood) { FoodLogView().environmentObject(viewModel) }
+        .sheet(isPresented: $showNote) { NoteLogView().environmentObject(viewModel) }
     }
 
     private func categoryButton(
-        title:  String,
-        icon:   String,
-        color:  Color,
+        title: String,
+        icon: String,
+        color: Color,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -95,6 +111,7 @@ struct QuickLogView: View {
                 Text(title)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
@@ -104,3 +121,12 @@ struct QuickLogView: View {
         .buttonStyle(.plain)
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    QuickLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

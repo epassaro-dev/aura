@@ -4,11 +4,11 @@ struct MedicationLogView: View {
     @EnvironmentObject private var viewModel: DailyLogViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var name:         String = ""
-    @State private var dosage:       String = ""
-    @State private var takenAt:      Date   = .now
-    @State private var isPreventive: Bool   = false
-    @State private var notes:        String = ""
+    @State private var name: String = ""
+    @State private var dosage: String = ""
+    @State private var takenAt: Date = .now
+    @State private var isPreventive: Bool = false
+    @State private var notes: String = ""
 
     var body: some View {
         NavigationStack {
@@ -41,11 +41,11 @@ struct MedicationLogView: View {
         ToolbarItem(placement: .confirmationAction) {
             Button("Save") {
                 let entry = MedicationEntry(
-                    name:         name,
-                    dosage:       dosage,
-                    takenAt:      takenAt,
+                    name: name,
+                    dosage: dosage,
+                    takenAt: takenAt,
                     isPreventive: isPreventive,
-                    notes:        notes
+                    notes: notes
                 )
                 viewModel.addMedicationEntry(entry)
                 dismiss()
@@ -54,3 +54,12 @@ struct MedicationLogView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    MedicationLogView()
+        .environmentObject(DailyLogViewModel.preview)
+        .modelContainer(ModelContainer.preview)
+}
+

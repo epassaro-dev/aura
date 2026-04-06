@@ -5,9 +5,9 @@ import Combine
 /// When security is enabled in Settings the app locks whenever it enters the background.
 @MainActor
 final class SecurityViewModel: ObservableObject {
-    @Published var isLocked:         Bool = false
+    @Published var isLocked: Bool = false
     @Published var isAuthenticating: Bool = false
-    @Published var authError:        String?
+    @Published var authError: String?
 
     private let securityService = SecurityService()
 
@@ -21,7 +21,7 @@ final class SecurityViewModel: ObservableObject {
     func authenticate() async {
         guard !isAuthenticating else { return }
         isAuthenticating = true
-        authError        = nil
+        authError = nil
 
         do {
             let success = try await securityService.authenticate()
@@ -40,3 +40,4 @@ final class SecurityViewModel: ObservableObject {
         }
     }
 }
+
