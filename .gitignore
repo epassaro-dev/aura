@@ -60,3 +60,15 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Android
+*.iml
+.gradle/
+local.properties
+.idea/
+android/app/build/
+android/build/
+android/.navigation/
+captures/
+android/.externalNativeBuild/
+android/.cxx/
