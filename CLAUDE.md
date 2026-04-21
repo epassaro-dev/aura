@@ -77,6 +77,26 @@ xcodebuild \
 
 **Key config:** `AuraApp.swift` sets up the `ModelContainer` for SwiftData. Add new SwiftData model types to the `Schema([...])` array there.
 
+**Test plan:** `ios/Aura.xctestplan` is the explicit, version-controlled test plan referenced by the scheme. Add new test targets there — do not re-enable `shouldAutocreateTestPlan` in the scheme.
+
+**Local test run** (omit `OS=` — the version in the CI workflow targets the CI machine's runtimes):
+```bash
+xcodebuild \
+  -project ios/Aura.xcodeproj \
+  -scheme Aura \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -configuration Debug \
+  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+  test | xcbeautify
+```
+
+**SwiftData model architecture:**
+- `Models/Catalog/` — user-extensible reference types (`FeelingType`, `TriggerType`, `SymptomType`, `Medicine`, `FoodItem`, `ActivityType`, `TellingSignType`, `ReliefMethodType`). All carry `isDefault` (locks renaming, enables restore) and `isArchived` (soft delete).
+- `Models/Log/` — independent daily log entries, each with a `date: Date` anchor (`SleepEntry`, `FeelingEntry`, `MedicineLog`, `ActivityEntry`, `MealEntry`, `TriggerEntry`, `SymptomEntry`).
+- `Models/Headache/` — `HeadacheEntry` with cascading child logs: `HeadachePainLog` (intensity 1–10 + affected areas, tracks fluctuations over time), `HeadacheSymptomLog`, `HeadacheMedicineLog` (+ `efficacy`), `HeadacheReliefLog` (+ `efficacy`).
+
+**SwiftData relationship rule:** Always declare an explicit `@Relationship(deleteRule:, inverse:)` back-reference on the "one" side of every one-to-many relationship. Without it SwiftData cannot find the related objects on deletion and nullify/cascade silently does nothing.
+
 ## CI
 
 - **iOS:** runs on PRs (`ios-build.yml`) — uses `macos-26` + Xcode 26.4, requires `xcbeautify` installed.
@@ -86,6 +106,9 @@ xcodebuild \
 - **Android**: Android Studio (latest stable), JDK 17, Android SDK 24+.
 - **iOS**: Xcode 26+, macOS 26+.
 - **General**: Git, and optionally tools like xcbeautify for iOS CI.
+
+## General Rules
+- Always verify that every file you create or edit imports the appropriate modules (e.g. `Foundation`, `SwiftUI`, `SwiftData`).
 
 ## Code Quality and Testing Strategy
 - **iOS** use SwiftLint, indent with 4 spaces and don't align colons nor equal signs.
