@@ -1,0 +1,27 @@
+{
+  "configurations": [
+    {
+      "id": "AURA0001-0000-0000-0000-000000000001",
+      "name": "Test Scheme Action",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {},
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:Aura.xcodeproj",
+        "identifier": "AAA200000000000000000002",
+        "name": "AuraTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Aura.xcodeproj",
+        "identifier": "AAA200000000000000000003",
+        "name": "AuraUITests"
+      }
+    }
+  ],
+  "version": 1
+}

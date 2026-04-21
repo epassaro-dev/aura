@@ -14,6 +14,26 @@
 		AABF00000000000000000005 /* AuraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000006 /* AuraTests.swift */; };
 		AABF00000000000000000006 /* AuraUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000008 /* AuraUITests.swift */; };
 		AABF00000000000000000007 /* AuraUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000009 /* AuraUITestsLaunchTests.swift */; };
+		AABF00000000000000000008 /* FeelingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000000B /* FeelingType.swift */; };
+		AABF00000000000000000009 /* TriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000000C /* TriggerType.swift */; };
+		AABF0000000000000000000A /* SymptomType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000000D /* SymptomType.swift */; };
+		AABF0000000000000000000B /* Medicine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000000E /* Medicine.swift */; };
+		AABF0000000000000000000C /* FoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000000F /* FoodItem.swift */; };
+		AABF0000000000000000000D /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000010 /* ActivityType.swift */; };
+		AABF0000000000000000000E /* TellingSignType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000011 /* TellingSignType.swift */; };
+		AABF0000000000000000000F /* ReliefMethodType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000012 /* ReliefMethodType.swift */; };
+		AABF00000000000000000010 /* SleepEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000013 /* SleepEntry.swift */; };
+		AABF00000000000000000011 /* FeelingEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000014 /* FeelingEntry.swift */; };
+		AABF00000000000000000012 /* MedicineLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000015 /* MedicineLog.swift */; };
+		AABF00000000000000000013 /* ActivityEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000016 /* ActivityEntry.swift */; };
+		AABF00000000000000000014 /* MealEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000017 /* MealEntry.swift */; };
+		AABF00000000000000000015 /* TriggerEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000018 /* TriggerEntry.swift */; };
+		AABF00000000000000000016 /* SymptomEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000019 /* SymptomEntry.swift */; };
+		AABF00000000000000000017 /* HeadacheEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001A /* HeadacheEntry.swift */; };
+		AABF00000000000000000018 /* HeadacheSymptomLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001B /* HeadacheSymptomLog.swift */; };
+		AABF00000000000000000019 /* HeadacheMedicineLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001C /* HeadacheMedicineLog.swift */; };
+		AABF0000000000000000001A /* HeadacheReliefLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001D /* HeadacheReliefLog.swift */; };
+		AABF0000000000000000001B /* HeadachePainLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001E /* HeadachePainLog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +64,26 @@
 		AAF100000000000000000008 /* AuraUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraUITests.swift; sourceTree = "<group>"; };
 		AAF100000000000000000009 /* AuraUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		AAF10000000000000000000A /* AuraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAF10000000000000000000B /* FeelingType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingType.swift; sourceTree = "<group>"; };
+		AAF10000000000000000000C /* TriggerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerType.swift; sourceTree = "<group>"; };
+		AAF10000000000000000000D /* SymptomType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymptomType.swift; sourceTree = "<group>"; };
+		AAF10000000000000000000E /* Medicine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medicine.swift; sourceTree = "<group>"; };
+		AAF10000000000000000000F /* FoodItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItem.swift; sourceTree = "<group>"; };
+		AAF100000000000000000010 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
+		AAF100000000000000000011 /* TellingSignType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TellingSignType.swift; sourceTree = "<group>"; };
+		AAF100000000000000000012 /* ReliefMethodType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReliefMethodType.swift; sourceTree = "<group>"; };
+		AAF100000000000000000013 /* SleepEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepEntry.swift; sourceTree = "<group>"; };
+		AAF100000000000000000014 /* FeelingEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingEntry.swift; sourceTree = "<group>"; };
+		AAF100000000000000000015 /* MedicineLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicineLog.swift; sourceTree = "<group>"; };
+		AAF100000000000000000016 /* ActivityEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityEntry.swift; sourceTree = "<group>"; };
+		AAF100000000000000000017 /* MealEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEntry.swift; sourceTree = "<group>"; };
+		AAF100000000000000000018 /* TriggerEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerEntry.swift; sourceTree = "<group>"; };
+		AAF100000000000000000019 /* SymptomEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymptomEntry.swift; sourceTree = "<group>"; };
+		AAF10000000000000000001A /* HeadacheEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheEntry.swift; sourceTree = "<group>"; };
+		AAF10000000000000000001B /* HeadacheSymptomLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheSymptomLog.swift; sourceTree = "<group>"; };
+		AAF10000000000000000001C /* HeadacheMedicineLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheMedicineLog.swift; sourceTree = "<group>"; };
+		AAF10000000000000000001D /* HeadacheReliefLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadacheReliefLog.swift; sourceTree = "<group>"; };
+		AAF10000000000000000001E /* HeadachePainLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadachePainLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,8 +128,60 @@
 				AAF100000000000000000002 /* ContentView.swift */,
 				AAF100000000000000000003 /* Assets.xcassets */,
 				AAA100000000000000000003 /* Preview Content */,
+				AAA100000000000000000007 /* Models */,
 			);
 			path = Aura;
+			sourceTree = "<group>";
+		};
+		AAA100000000000000000007 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AAA100000000000000000008 /* Catalog */,
+				AAA100000000000000000009 /* Log */,
+				AAA10000000000000000000A /* Headache */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AAA100000000000000000008 /* Catalog */ = {
+			isa = PBXGroup;
+			children = (
+				AAF10000000000000000000B /* FeelingType.swift */,
+				AAF10000000000000000000C /* TriggerType.swift */,
+				AAF10000000000000000000D /* SymptomType.swift */,
+				AAF10000000000000000000E /* Medicine.swift */,
+				AAF10000000000000000000F /* FoodItem.swift */,
+				AAF100000000000000000010 /* ActivityType.swift */,
+				AAF100000000000000000011 /* TellingSignType.swift */,
+				AAF100000000000000000012 /* ReliefMethodType.swift */,
+			);
+			path = Catalog;
+			sourceTree = "<group>";
+		};
+		AAA100000000000000000009 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				AAF100000000000000000013 /* SleepEntry.swift */,
+				AAF100000000000000000014 /* FeelingEntry.swift */,
+				AAF100000000000000000015 /* MedicineLog.swift */,
+				AAF100000000000000000016 /* ActivityEntry.swift */,
+				AAF100000000000000000017 /* MealEntry.swift */,
+				AAF100000000000000000018 /* TriggerEntry.swift */,
+				AAF100000000000000000019 /* SymptomEntry.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
+		AAA10000000000000000000A /* Headache */ = {
+			isa = PBXGroup;
+			children = (
+				AAF10000000000000000001A /* HeadacheEntry.swift */,
+				AAF10000000000000000001B /* HeadacheSymptomLog.swift */,
+				AAF10000000000000000001C /* HeadacheMedicineLog.swift */,
+				AAF10000000000000000001D /* HeadacheReliefLog.swift */,
+				AAF10000000000000000001E /* HeadachePainLog.swift */,
+			);
+			path = Headache;
 			sourceTree = "<group>";
 		};
 		AAA100000000000000000003 /* Preview Content */ = {
@@ -243,6 +335,26 @@
 			files = (
 				AABF00000000000000000002 /* ContentView.swift in Sources */,
 				AABF00000000000000000001 /* AuraApp.swift in Sources */,
+				AABF00000000000000000008 /* FeelingType.swift in Sources */,
+				AABF00000000000000000009 /* TriggerType.swift in Sources */,
+				AABF0000000000000000000A /* SymptomType.swift in Sources */,
+				AABF0000000000000000000B /* Medicine.swift in Sources */,
+				AABF0000000000000000000C /* FoodItem.swift in Sources */,
+				AABF0000000000000000000D /* ActivityType.swift in Sources */,
+				AABF0000000000000000000E /* TellingSignType.swift in Sources */,
+				AABF0000000000000000000F /* ReliefMethodType.swift in Sources */,
+				AABF00000000000000000010 /* SleepEntry.swift in Sources */,
+				AABF00000000000000000011 /* FeelingEntry.swift in Sources */,
+				AABF00000000000000000012 /* MedicineLog.swift in Sources */,
+				AABF00000000000000000013 /* ActivityEntry.swift in Sources */,
+				AABF00000000000000000014 /* MealEntry.swift in Sources */,
+				AABF00000000000000000015 /* TriggerEntry.swift in Sources */,
+				AABF00000000000000000016 /* SymptomEntry.swift in Sources */,
+				AABF00000000000000000017 /* HeadacheEntry.swift in Sources */,
+				AABF00000000000000000018 /* HeadacheSymptomLog.swift in Sources */,
+				AABF00000000000000000019 /* HeadacheMedicineLog.swift in Sources */,
+				AABF0000000000000000001A /* HeadacheReliefLog.swift in Sources */,
+				AABF0000000000000000001B /* HeadachePainLog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
