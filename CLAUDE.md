@@ -97,6 +97,52 @@ xcodebuild \
 
 **SwiftData relationship rule:** Always declare an explicit `@Relationship(deleteRule:, inverse:)` back-reference on the "one" side of every one-to-many relationship. Without it SwiftData cannot find the related objects on deletion and nullify/cascade silently does nothing.
 
+**ViewModel initialization:** Views that own a ViewModel backed by `ModelContext` should accept the context via `init` and initialize the ViewModel eagerly using `State(wrappedValue:)`. Avoid the lazy `onAppear` pattern — it causes blank Xcode Previews because the canvas renders the initial nil state before `onAppear` fires.
+
+```swift
+struct MyView: View {
+    private let context: ModelContext
+    @State private var viewModel: MyViewModel
+
+    init(context: ModelContext) {
+        self.context = context
+        _viewModel = State(wrappedValue: MyViewModel(context: context))
+    }
+}
+```
+
+Store `context` as a property too so it can be forwarded to any child sheets that are presented from within the view.
+
+**Previews for SwiftData views:** Use an in-memory `ModelContainer` and pass `container.mainContext` to the view's `init`. Also attach `.modelContainer(container)` so child sheets inherit a valid context from the environment.
+
+```swift
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: MyModel.self, configurations: config)
+    return MyView(context: container.mainContext)
+        .modelContainer(container)
+}
+```
+
+**Adding new Swift files to the Xcode project:** Files created outside Xcode are not automatically included in the build target. Use the `xcodeproj` Ruby gem (already installed) to add them. Run from `ios/`:
+
+```ruby
+require 'xcodeproj'
+project = Xcodeproj::Project.open('Aura.xcodeproj')
+target = project.targets.find { |t| t.name == 'Aura' } # or 'AuraTests'
+root_group = project.main_group
+
+def find_or_create_group(parent, name)
+  parent.children.find { |c|
+    c.is_a?(Xcodeproj::Project::Object::PBXGroup) && (c.name == name || c.path == name)
+  } || parent.new_group(name, name)
+end
+
+group = ['Aura', 'SubFolder'].reduce(root_group) { |g, n| find_or_create_group(g, n) }
+target.source_build_phase.add_file_reference(group.new_file('MyFile.swift'))
+project.save
+```
+
 ## CI
 
 - **iOS:** runs on PRs (`ios-build.yml`) — uses `macos-26` + Xcode 26.4, requires `xcbeautify` installed.

@@ -13,6 +13,9 @@ import SwiftData
     @Relationship(deleteRule: .nullify, inverse: \HeadacheMedicineLog.medicine)
     var headacheMedicineLogs: [HeadacheMedicineLog] = []
 
+    @Relationship(deleteRule: .cascade, inverse: \TreatmentSchedule.medicine)
+    var schedules: [TreatmentSchedule] = []
+
     init(name: String, sfSymbol: String, isDefault: Bool = false, isArchived: Bool = false, defaultDosage: String? = nil) {
         self.name = name
         self.sfSymbol = sfSymbol

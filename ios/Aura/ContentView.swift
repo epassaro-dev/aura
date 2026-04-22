@@ -1,17 +1,20 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var context
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, World!")
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                MedicationSectionView(context: context)
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: Medicine.self, inMemory: true)
 }
