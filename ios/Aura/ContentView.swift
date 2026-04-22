@@ -7,14 +7,18 @@ struct ContentView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                SleepSectionView(context: context)
                 MedicationSectionView(context: context)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
     }
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Medicine.self, inMemory: true)
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: SleepEntry.self, Medicine.self, configurations: config)
+    return ContentView()
+        .modelContainer(container)
 }
