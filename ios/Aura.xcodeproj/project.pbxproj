@@ -171,7 +171,6 @@
 			children = (
 				0979541B8A046AFEFD15F43A /* DataSeeder.swift */,
 			);
-			name = Seeding;
 			path = Seeding;
 			sourceTree = "<group>";
 		};
@@ -188,7 +187,6 @@
 			children = (
 				730812CBF287D4920F00D59F /* SleepSectionViewModel.swift */,
 			);
-			name = Sleep;
 			path = Sleep;
 			sourceTree = "<group>";
 		};
@@ -351,7 +349,6 @@
 				BF602B32A30FAC84A2A76D8C /* AddSleepSheet.swift */,
 				52B1B21B298739B552F8F295 /* SleepSectionView.swift */,
 			);
-			name = Sleep;
 			path = Sleep;
 			sourceTree = "<group>";
 		};
