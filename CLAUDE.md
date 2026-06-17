@@ -124,24 +124,7 @@ Store `context` as a property too so it can be forwarded to any child sheets tha
 }
 ```
 
-**Adding new Swift files to the Xcode project:** Files created outside Xcode are not automatically included in the build target. Use the `xcodeproj` Ruby gem (already installed) to add them. Run from `ios/`:
-
-```ruby
-require 'xcodeproj'
-project = Xcodeproj::Project.open('Aura.xcodeproj')
-target = project.targets.find { |t| t.name == 'Aura' } # or 'AuraTests'
-root_group = project.main_group
-
-def find_or_create_group(parent, name)
-  parent.children.find { |c|
-    c.is_a?(Xcodeproj::Project::Object::PBXGroup) && (c.name == name || c.path == name)
-  } || parent.new_group(name, name)
-end
-
-group = ['Aura', 'SubFolder'].reduce(root_group) { |g, n| find_or_create_group(g, n) }
-target.source_build_phase.add_file_reference(group.new_file('MyFile.swift'))
-project.save
-```
+**Adding new Swift files to the Xcode project:** Files created outside Xcode are not automatically included in the build target. Use the `/add-to-xcode` skill, which handles group creation, duplicate detection, and multi-file batching via the `xcodeproj` Ruby gem (already installed).
 
 ## CI
 
@@ -150,7 +133,7 @@ project.save
 
 ## Development Environment
 - **Android**: Android Studio (latest stable), JDK 17, Android SDK 24+.
-- **iOS**: Xcode 26+, macOS 26+.
+- **iOS**: Xcode 26+, macOS 26+, minimum deployment target iOS 26.
 - **General**: Git, and optionally tools like xcbeautify for iOS CI.
 
 ## General Rules
