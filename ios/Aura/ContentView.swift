@@ -33,9 +33,6 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, Medicine.self, configurations: config)
-    return ContentView()
-        .modelContainer(container)
+#Preview(traits: .modifier(EmptyPreviewData())) {
+    ContentView()
 }

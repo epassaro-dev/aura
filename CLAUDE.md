@@ -91,14 +91,11 @@ struct MySection: View {
 - Writes: views own every context write (insert + `do/catch` save via `@Environment(\.modelContext)`). Domain types build or mutate models but never touch the context.
 - Persistence errors: never `try?` — use `do/catch` and log via `Logger.persistence` / `Logger.seeding` (`Support/Logger+Aura.swift`).
 
-**Previews for SwiftData views:** Use an in-memory `ModelContainer` and attach `.modelContainer(container)` so views and their sheets get a context from the environment.
+**Previews for SwiftData views:** Attach a shared sample-data scenario from `Aura/Preview Content/PreviewSampleData.swift`; add new scenarios there as `SampleDataPreviewModifier` conformances (no `try!` — the preview system reports container failures in the canvas). `QueryPreview { (model: MyModel) in ... }` bridges scenarios to views that take a model instance.
 
 ```swift
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: MyModel.self, configurations: config)
-    return MyView(day: .now, nextDay: .now)
-        .modelContainer(container)
+#Preview("Empty state", traits: .modifier(EmptyPreviewData())) {
+    MyView(day: .now, nextDay: .now)
 }
 ```
 

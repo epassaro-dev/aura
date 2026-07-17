@@ -58,22 +58,10 @@ struct MedicineCatalogSheet: View {
     }
 }
 
-#Preview("Empty") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
-    return MedicineCatalogSheet()
-        .modelContainer(container)
+#Preview("Empty", traits: .modifier(EmptyPreviewData())) {
+    MedicineCatalogSheet()
 }
 
-#Preview("With medicines") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
-    let medicines = [
-        Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg"),
-        Medicine(name: "Topiramate", sfSymbol: "pills.fill", defaultDosage: "25mg"),
-        Medicine(name: "Amitriptyline", sfSymbol: "pills.fill"),
-    ]
-    medicines.forEach { container.mainContext.insert($0) }
-    return MedicineCatalogSheet()
-        .modelContainer(container)
+#Preview("With medicines", traits: .modifier(MedicationPreviewData())) {
+    MedicineCatalogSheet()
 }

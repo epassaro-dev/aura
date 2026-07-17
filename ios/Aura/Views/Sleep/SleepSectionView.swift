@@ -94,44 +94,23 @@ struct SleepSectionView: View {
     }
 }
 
-#Preview("Empty state") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
+#Preview("Empty state", traits: .modifier(EmptyPreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-    return SleepSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Night sleep logged") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: .now)
-    let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
-    let start = calendar.date(byAdding: .hour, value: -8, to: .now) ?? .now
-    let entry = SleepEntry(date: today, type: .night, startTime: start, endTime: .now, quality: 4)
-    container.mainContext.insert(entry)
-    return SleepSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+#Preview("Night sleep logged", traits: .modifier(NightSleepPreviewData())) {
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Night sleep and nap") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: .now)
-    let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
-    let nightStart = calendar.date(byAdding: .hour, value: -9, to: .now) ?? .now
-    let nightEnd = calendar.date(byAdding: .hour, value: -1, to: .now) ?? .now
-    let night = SleepEntry(date: today, type: .night, startTime: nightStart, endTime: nightEnd, quality: 3)
-    let napStart = calendar.date(byAdding: .minute, value: -45, to: .now) ?? .now
-    let nap = SleepEntry(date: today, type: .nap, startTime: napStart, endTime: .now, quality: 5)
-    container.mainContext.insert(night)
-    container.mainContext.insert(nap)
-    return SleepSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+#Preview("Night sleep and nap", traits: .modifier(FullSleepPreviewData())) {
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }

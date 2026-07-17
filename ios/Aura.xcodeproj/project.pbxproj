@@ -10,6 +10,7 @@
 		1560B2B58CC034D6C2C2C1B5 /* AuraSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC387A1F37B9A3EC6F2CE0A5 /* AuraSchema.swift */; };
 		15AEEF60DAFB7B0DC11067F7 /* ManyToManyRelationshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD109367CBFD01653957163 /* ManyToManyRelationshipTests.swift */; };
 		288758D891D018800E421E79 /* HeadacheCascadeDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4DF039384FBC132DCB2C /* HeadacheCascadeDeleteTests.swift */; };
+		34DB3490300AA0FC002ED895 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DB348F300AA0FC002ED895 /* PreviewSampleData.swift */; };
 		3D1C6A60FFC386DD59E999FB /* TreatmentScheduleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F8BED80984FE3014FA5D3A /* TreatmentScheduleSheet.swift */; };
 		42D5BE69493DF3672A66DE11 /* SleepSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B1B21B298739B552F8F295 /* SleepSectionView.swift */; };
 		4D16EFB883043A2D5972897B /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50E74ADA9CF9F97C45AAA05 /* TestHelpers.swift */; };
@@ -80,6 +81,7 @@
 /* Begin PBXFileReference section */
 		0979541B8A046AFEFD15F43A /* DataSeeder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataSeeder.swift; sourceTree = "<group>"; };
 		26F8BED80984FE3014FA5D3A /* TreatmentScheduleSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TreatmentScheduleSheet.swift; sourceTree = "<group>"; };
+		34DB348F300AA0FC002ED895 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
 		389D1493F0FACC87471081CB /* SleepDayTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepDayTests.swift; sourceTree = "<group>"; };
 		52B1B21B298739B552F8F295 /* SleepSectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepSectionView.swift; sourceTree = "<group>"; };
 		5A02326F986F19F51878834C /* TreatmentSchedule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TreatmentSchedule.swift; sourceTree = "<group>"; };
@@ -159,16 +161,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D0A1B2C3D4E5F60718293A4B /* Domain */ = {
-			isa = PBXGroup;
-			children = (
-				88A1F8A28AB9C53E27F85EC5 /* SleepDay.swift */,
-				B01F310FFA40D161BA2F3855 /* MedicationProgress.swift */,
-				D3A3CCF03EDA06179F3F1125 /* TreatmentPlanner.swift */,
-			);
-			path = Domain;
-			sourceTree = "<group>";
-		};
 		2E2BF7BC3936FEF40B133747 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				AAF100000000000000000004 /* Preview Assets.xcassets */,
+				34DB348F300AA0FC002ED895 /* PreviewSampleData.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -336,6 +329,16 @@
 				AAF10000000000000000001E /* HeadachePainLog.swift */,
 			);
 			path = Headache;
+			sourceTree = "<group>";
+		};
+		D0A1B2C3D4E5F60718293A4B /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				88A1F8A28AB9C53E27F85EC5 /* SleepDay.swift */,
+				B01F310FFA40D161BA2F3855 /* MedicationProgress.swift */,
+				D3A3CCF03EDA06179F3F1125 /* TreatmentPlanner.swift */,
+			);
+			path = Domain;
 			sourceTree = "<group>";
 		};
 		DA6CDACDCD6453E0768663DC /* Sleep */ = {
@@ -475,6 +478,7 @@
 				AABF00000000000000000011 /* FeelingEntry.swift in Sources */,
 				AABF00000000000000000012 /* MedicineLog.swift in Sources */,
 				AABF00000000000000000013 /* ActivityEntry.swift in Sources */,
+				34DB3490300AA0FC002ED895 /* PreviewSampleData.swift in Sources */,
 				AABF00000000000000000014 /* MealEntry.swift in Sources */,
 				AABF00000000000000000015 /* TriggerEntry.swift in Sources */,
 				AABF00000000000000000016 /* SymptomEntry.swift in Sources */,

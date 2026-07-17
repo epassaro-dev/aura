@@ -56,11 +56,8 @@ struct TreatmentScheduleSheet: View {
     }
 }
 
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
-    let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
-    container.mainContext.insert(medicine)
-    return TreatmentScheduleSheet(medicine: medicine)
-        .modelContainer(container)
+#Preview(traits: .modifier(MedicationPreviewData())) {
+    QueryPreview { (medicine: Medicine) in
+        TreatmentScheduleSheet(medicine: medicine)
+    }
 }

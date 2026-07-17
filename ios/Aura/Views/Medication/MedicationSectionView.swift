@@ -81,42 +81,23 @@ struct MedicationSectionView: View {
     }
 }
 
-#Preview("Empty state") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
+#Preview("Empty state", traits: .modifier(EmptyPreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-    return MedicationSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+    MedicationSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Partially taken") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
+#Preview("Partially taken", traits: .modifier(MedicationPreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-    let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
-    let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
-    container.mainContext.insert(medicine)
-    container.mainContext.insert(schedule)
-    return MedicationSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+    MedicationSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("All doses taken") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
+#Preview("All doses taken", traits: .modifier(CompletedMedicationPreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-    let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
-    let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
-    let log = MedicineLog(date: today, timestamp: .now, medicine: medicine, dosage: "40mg")
-    container.mainContext.insert(medicine)
-    container.mainContext.insert(schedule)
-    container.mainContext.insert(log)
-    return MedicationSectionView(day: today, nextDay: tomorrow)
-        .modelContainer(container)
+    MedicationSectionView(day: today, nextDay: tomorrow)
         .padding()
 }

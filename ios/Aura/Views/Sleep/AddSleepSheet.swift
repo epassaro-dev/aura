@@ -120,16 +120,10 @@ struct AddSleepSheet: View {
     }
 }
 
-#Preview("Night sleep") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    return AddSleepSheet(type: .night)
-        .modelContainer(container)
+#Preview("Night sleep", traits: .modifier(EmptyPreviewData())) {
+    AddSleepSheet(type: .night)
 }
 
-#Preview("Nap") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    return AddSleepSheet(type: .nap)
-        .modelContainer(container)
+#Preview("Nap", traits: .modifier(EmptyPreviewData())) {
+    AddSleepSheet(type: .nap)
 }
