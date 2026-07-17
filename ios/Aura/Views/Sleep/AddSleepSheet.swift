@@ -10,6 +10,7 @@ struct AddSleepSheet: View {
     @State private var startTime: Date
     @State private var endTime: Date
     @State private var quality: Int = 3
+    @State private var showSaveError = false
 
     init(type: SleepType) {
         self.type = type
@@ -17,11 +18,13 @@ struct AddSleepSheet: View {
         let calendar = Calendar.current
         if type == .night {
             let yesterday = calendar.date(byAdding: .day, value: -1, to: now) ?? now
-            var components = calendar.dateComponents([.year, .month, .day], from: yesterday)
-            components.hour = 22
-            components.minute = 0
-            _startTime = State(wrappedValue: calendar.date(from: components) ?? yesterday)
-            _endTime = State(wrappedValue: now)
+            var startComponents = calendar.dateComponents([.year, .month, .day], from: yesterday)
+            startComponents.hour = 23
+            startComponents.minute = 0
+            let startDate = calendar.date(from: startComponents) ?? yesterday
+            let endDate = calendar.date(byAdding: .hour, value: 8, to: startDate) ?? now
+            _startTime = State(wrappedValue: startDate)
+            _endTime = State(wrappedValue: endDate)
         } else {
             _startTime = State(wrappedValue: calendar.date(byAdding: .hour, value: -1, to: now) ?? now)
             _endTime = State(wrappedValue: now)
@@ -86,6 +89,11 @@ struct AddSleepSheet: View {
                         .disabled(endTime <= startTime)
                 }
             }
+            .alert("Couldn't Save Sleep Entry", isPresented: $showSaveError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Something went wrong while saving. Your entry hasn't been stored — please try again.")
+            }
         }
     }
 
@@ -100,10 +108,15 @@ struct AddSleepSheet: View {
         context.insert(entry)
         do {
             try context.save()
+            // TODO: show a confirmation toast naming the anchored day (e.g. "Night sleep logged for Jul 10"),
+            // reusable across log flows; evaluate idiomatic SwiftUI presentation options first.
+            dismiss()
         } catch {
             Logger.persistence.error("Failed to save sleep entry: \(String(describing: error), privacy: .public)")
+            // Remove the pending insert so autosave can't persist or retry it behind the user's back.
+            context.delete(entry)
+            showSaveError = true
         }
-        dismiss()
     }
 }
 
