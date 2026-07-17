@@ -1,38 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
 Aura is a migraine journal app for iOS and Android. Users track triggers, episodes, symptoms, preventive medicine, sleep quality, and physical activity. The repo contains two independent native apps under `ios/` and `android/`.
-
-**Key Features**
-- Daily logging of sleep, medications, food, activity, feelings, symptoms, and triggers.
-- Headache/migraine tracking, with symptoms and pain intensity fluctuations, attempted remedies and their efficacy.
-- Optional encryption + biometric authentication.
-
-**Daily Data Entries**
-- Length and quality of night sleep and naps.
-- Stress levels and feelings (depression, anxiety, happiness, etc.).
-- Preventive medicines and supplements taken.
-- Physical activity length and intensity.
-- Meals and food eaten.
-- Potential triggers experienced (dehydration, storms, loud music, flashing lights, contact lenses, etc.).
-- Symptoms experienced (nausea, neck pain, cold, fever, etc.).
-
-**Headache tracking**
-- Start time and end time (or if still in progress).
-- Type of headache (migraine, rebound headache, tension headache, etc.).
-- Pain intensity.
-- Affected area of the head.
-- Symptoms experienced.
-- Medication taken, dosage, at what time, efficacy.
-- Other relief methods attempted, at what time, efficacy.
-- Telling signs experienced (aura, dizziness, etc.).
-- Potential triggers experienced.
-
-**Customizable Data**
-Users can extend the tracked data beyond the default options by adding custom items for feelings, triggers, symptoms, medicines, food, types of physical activities. Items, both default and custom, are shown by name and a customizable icon.
 
 ## Android
 
@@ -42,6 +12,7 @@ Ignore Android for now, focus only on iOS.
 **Stack:** Kotlin, Jetpack Compose (Material3), Room (local DB), Hilt (DI), KSP
 
 **Build & test** (run from `android/`):
+
 ```bash
 cd android
 ./gradlew build          # compile + assemble
@@ -50,6 +21,7 @@ cd android
 ```
 
 Run a single test class:
+
 ```bash
 ./gradlew test --tests "com.aura.android.ExampleUnitTest"
 ```
@@ -65,6 +37,7 @@ Main development platform.
 **Stack:** SwiftUI, SwiftData
 
 **Build & test** (requires Xcode):
+
 ```bash
 xcodebuild \
   -project ios/Aura.xcodeproj \
@@ -75,11 +48,12 @@ xcodebuild \
   test | xcbeautify
 ```
 
-**Key config:** `AuraApp.swift` sets up the `ModelContainer` for SwiftData. Add new SwiftData model types to the `Schema([...])` array there.
+**Key config:** `AuraApp.swift` creates the `ModelContainer` via `ModelContainer.makeAuraContainer()`. The schema is versioned: add new SwiftData model types to `AuraSchemaV1.models` in `Aura/AuraSchema.swift`; schema changes after release need a new `VersionedSchema` plus a stage in `AuraMigrationPlan`.
 
 **Test plan:** `ios/Aura.xctestplan` is the explicit, version-controlled test plan referenced by the scheme. Add new test targets there — do not re-enable `shouldAutocreateTestPlan` in the scheme.
 
 **Local test run** (omit `OS=` — the version in the CI workflow targets the CI machine's runtimes):
+
 ```bash
 xcodebuild \
   -project ios/Aura.xcodeproj \
@@ -91,40 +65,44 @@ xcodebuild \
 ```
 
 **SwiftData model architecture:**
+
 - `Models/Catalog/` — user-extensible reference types (`FeelingType`, `TriggerType`, `SymptomType`, `Medicine`, `FoodItem`, `ActivityType`, `TellingSignType`, `ReliefMethodType`). All carry `isDefault` (locks renaming, enables restore) and `isArchived` (soft delete).
 - `Models/Log/` — independent daily log entries, each with a `date: Date` anchor (`SleepEntry`, `FeelingEntry`, `MedicineLog`, `ActivityEntry`, `MealEntry`, `TriggerEntry`, `SymptomEntry`).
 - `Models/Headache/` — `HeadacheEntry` with cascading child logs: `HeadachePainLog` (intensity 1–10 + affected areas, tracks fluctuations over time), `HeadacheSymptomLog`, `HeadacheMedicineLog` (+ `efficacy`), `HeadacheReliefLog` (+ `efficacy`).
 
 **SwiftData relationship rule:** Always declare an explicit `@Relationship(deleteRule:, inverse:)` back-reference on the "one" side of every one-to-many relationship. Without it SwiftData cannot find the related objects on deletion and nullify/cascade silently does nothing.
 
-**ViewModel initialization:** Views that own a ViewModel backed by `ModelContext` should accept the context via `init` and initialize the ViewModel eagerly using `State(wrappedValue:)`. Avoid the lazy `onAppear` pattern — it causes blank Xcode Previews because the canvas renders the initial nil state before `onAppear` fires.
+**Data flow pattern (no ViewModels):**
+
+- Reads: views declare `@Query`. Dynamic predicates (e.g. today's entries) are built in `init` from parameters:
 
 ```swift
-struct MyView: View {
-    private let context: ModelContext
-    @State private var viewModel: MyViewModel
+struct MySection: View {
+    @Query private var entries: [SleepEntry]
 
-    init(context: ModelContext) {
-        self.context = context
-        _viewModel = State(wrappedValue: MyViewModel(context: context))
+    init(day: Date, nextDay: Date) {
+        _entries = Query(filter: #Predicate<SleepEntry> { $0.date >= day && $0.date < nextDay })
     }
 }
 ```
 
-Store `context` as a property too so it can be forwarded to any child sheets that are presented from within the view.
+- `ContentView` owns the day anchor (`today`/`tomorrow`) and refreshes it on `NSCalendarDayChanged` and when the scene becomes active; child views re-init and their queries follow.
+- Domain logic lives in pure types in `Aura/Domain/` (`SleepDay`, `MedicationProgress`, `TreatmentPlanner`) — no `ModelContext`, unit-tested directly. `Aura/Support/` is for app-wide utilities only (`Logger+Aura`).
+- Writes: views own every context write (insert + `do/catch` save via `@Environment(\.modelContext)`). Domain types build or mutate models but never touch the context.
+- Persistence errors: never `try?` — use `do/catch` and log via `Logger.persistence` / `Logger.seeding` (`Support/Logger+Aura.swift`).
 
-**Previews for SwiftData views:** Use an in-memory `ModelContainer` and pass `container.mainContext` to the view's `init`. Also attach `.modelContainer(container)` so child sheets inherit a valid context from the environment.
+**Previews for SwiftData views:** Use an in-memory `ModelContainer` and attach `.modelContainer(container)` so views and their sheets get a context from the environment.
 
 ```swift
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: MyModel.self, configurations: config)
-    return MyView(context: container.mainContext)
+    return MyView(day: .now, nextDay: .now)
         .modelContainer(container)
 }
 ```
 
-**Adding new Swift files to the Xcode project:** Files created outside Xcode are not automatically included in the build target. Use the `/add-to-xcode` skill, which handles group creation, duplicate detection, and multi-file batching via the `xcodeproj` Ruby gem (already installed).
+**Adding/removing Swift files in the Xcode project:** Use the `/xcode-files` skill (requires Xcode running with the project open). Never create a new source directory on disk before registering it — the MCP tools can't adopt unregistered folders and will create a `"<Name> 2"` duplicate.
 
 ## CI
 
@@ -132,16 +110,21 @@ Store `context` as a property too so it can be forwarded to any child sheets tha
 - **Android:** manual trigger only (`android-build.yml`) — runs unit tests then full build.
 
 ## Development Environment
+
 - **Android**: Android Studio (latest stable), JDK 17, Android SDK 24+.
 - **iOS**: Xcode 26+, macOS 26+, minimum deployment target iOS 26.
 - **General**: Git, and optionally tools like xcbeautify for iOS CI.
 
 ## General Rules
+
 - Always verify that every file you create or edit imports the appropriate modules (e.g. `Foundation`, `SwiftUI`, `SwiftData`).
 
 ## Code Quality and Testing Strategy
-- **iOS** use SwiftLint, indent with 4 spaces and don't align colons nor equal signs.
+
+- **iOS** use SwiftLint (`ios/.swiftlint.yml`), indent with 4 spaces and don't align colons nor equal signs.
+- Lint runs in CI (strict) and via the pre-commit hook; enable the hook once per clone: `git config core.hooksPath .githooks`.
 - Aim for 80% test coverage.
 
 ## Privacy
+
 - User data stored locally and encrypted using standard platform-specific frameworks.
