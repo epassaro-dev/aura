@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import SwiftData
 
 enum DataSeeder {
@@ -22,7 +23,13 @@ enum DataSeeder {
                     medicine.name == entryName && medicine.isDefault == true
                 }
             )
-            guard ((try? context.fetch(descriptor)) ?? []).isEmpty else { continue }
+            do {
+                guard try context.fetch(descriptor).isEmpty else { continue }
+            } catch {
+                let details = String(describing: error)
+                Logger.seeding.error("Failed to look up default medicine \(entryName, privacy: .public): \(details, privacy: .public)")
+                continue
+            }
             context.insert(Medicine(
                 name: entry.name,
                 sfSymbol: "pills.fill",
@@ -31,6 +38,10 @@ enum DataSeeder {
             ))
         }
 
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            Logger.seeding.error("Failed to save seeded medicines: \(String(describing: error), privacy: .public)")
+        }
     }
 }
