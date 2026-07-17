@@ -1,40 +1,47 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct MedicationSectionView: View {
-    private let context: ModelContext
-    @State private var viewModel: MedicationSectionViewModel
+    @Environment(\.modelContext) private var context
+    @Query(filter: #Predicate<TreatmentSchedule> { $0.isActive == true })
+    private var schedules: [TreatmentSchedule]
+    @Query private var todayLogs: [MedicineLog]
+    @State private var showCatalog = false
 
-    init(context: ModelContext) {
-        self.context = context
-        _viewModel = State(wrappedValue: MedicationSectionViewModel(context: context))
+    init(day: Date, nextDay: Date) {
+        _todayLogs = Query(filter: #Predicate<MedicineLog> { log in
+            log.date >= day && log.date < nextDay
+        })
+    }
+
+    private var progress: MedicationProgress {
+        MedicationProgress(schedules: schedules, logs: todayLogs)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Medications")
                 .font(.headline)
-            if viewModel.schedules.isEmpty {
+            let displaySchedules = progress.displaySchedules
+            if displaySchedules.isEmpty {
                 Button("Set up treatment plan") {
-                    viewModel.showCatalog = true
+                    showCatalog = true
                 }
                 .buttonStyle(.borderedProminent)
             } else {
-                ForEach(viewModel.schedules) { schedule in
-                    scheduleRow(schedule: schedule, vm: viewModel)
+                ForEach(displaySchedules) { schedule in
+                    scheduleRow(schedule: schedule)
                 }
             }
         }
-        .sheet(isPresented: $viewModel.showCatalog) {
-            MedicineCatalogSheet(context: context) {
-                viewModel.showCatalog = false
-                viewModel.fetch()
-            }
+        .sheet(isPresented: $showCatalog) {
+            MedicineCatalogSheet()
         }
     }
 
     @ViewBuilder
-    private func scheduleRow(schedule: TreatmentSchedule, vm: MedicationSectionViewModel) -> some View {
+    private func scheduleRow(schedule: TreatmentSchedule) -> some View {
         HStack(spacing: 12) {
             Image(systemName: schedule.medicine?.sfSymbol ?? "pills.fill")
                 .font(.title2)
@@ -44,31 +51,42 @@ struct MedicationSectionView: View {
                 Text(schedule.medicine?.name ?? "Unknown")
                     .font(.subheadline)
                     .fontWeight(.medium)
-                let taken = vm.takenCount(for: schedule)
-                Text("\(taken) of \(schedule.timesPerDay) taken today")
+                Text("\(progress.takenCount(for: schedule)) of \(schedule.timesPerDay) taken today")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            if vm.isCompleted(for: schedule) {
+            if progress.isCompleted(for: schedule) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                     .font(.title2)
             } else {
                 Button("Take") {
-                    vm.markTaken(for: schedule)
+                    recordDose(for: schedule)
                 }
                 .buttonStyle(.bordered)
             }
         }
         .padding(.vertical, 4)
     }
+
+    private func recordDose(for schedule: TreatmentSchedule) {
+        guard let log = TreatmentPlanner.doseLog(for: schedule, progress: progress) else { return }
+        context.insert(log)
+        do {
+            try context.save()
+        } catch {
+            Logger.persistence.error("Failed to record dose: \(String(describing: error), privacy: .public)")
+        }
+    }
 }
 
 #Preview("Empty state") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Medicine.self, configurations: config)
-    return MedicationSectionView(context: container.mainContext)
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    return MedicationSectionView(day: today, nextDay: tomorrow)
         .modelContainer(container)
         .padding()
 }
@@ -76,11 +94,13 @@ struct MedicationSectionView: View {
 #Preview("Partially taken") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Medicine.self, configurations: config)
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
     let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
     container.mainContext.insert(medicine)
     container.mainContext.insert(schedule)
-    return MedicationSectionView(context: container.mainContext)
+    return MedicationSectionView(day: today, nextDay: tomorrow)
         .modelContainer(container)
         .padding()
 }
@@ -88,14 +108,15 @@ struct MedicationSectionView: View {
 #Preview("All doses taken") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Medicine.self, configurations: config)
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
     let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
-    let today = Calendar.current.startOfDay(for: .now)
     let log = MedicineLog(date: today, timestamp: .now, medicine: medicine, dosage: "40mg")
     container.mainContext.insert(medicine)
     container.mainContext.insert(schedule)
     container.mainContext.insert(log)
-    return MedicationSectionView(context: container.mainContext)
+    return MedicationSectionView(day: today, nextDay: tomorrow)
         .modelContainer(container)
         .padding()
 }

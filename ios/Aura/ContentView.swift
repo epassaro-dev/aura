@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @State private var today = Calendar.current.startOfDay(for: .now)
 
@@ -14,7 +13,7 @@ struct ContentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 SleepSectionView(day: today, nextDay: tomorrow)
-                MedicationSectionView(context: context)
+                MedicationSectionView(day: today, nextDay: tomorrow)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
