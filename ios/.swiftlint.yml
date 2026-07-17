@@ -1,0 +1,35 @@
+included:
+  - Aura
+  - AuraTests
+  - AuraUITests
+
+opt_in_rules:
+  - indentation_width
+  - operator_usage_whitespace
+
+indentation_width:
+  indentation_width: 4
+
+line_length:
+  warning: 140
+  error: 200
+
+# Multiline collection literals keep a trailing comma (project convention).
+trailing_comma:
+  mandatory_comma: true
+
+# Dosage units are legitimate short identifiers.
+identifier_name:
+  excluded:
+    - mg
+    - mcg
+    - g
+    - ml
+    - IU
+    - id
+    - vm
+
+disabled_rules:
+  - todo
+  # The documented #Preview pattern builds in-memory ModelContainers with try!.
+  - force_try

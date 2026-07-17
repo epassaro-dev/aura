@@ -21,6 +21,11 @@ jobs:
       - name: Select Xcode 26.4
         run: sudo xcode-select -s /Applications/Xcode_26.4.app
 
+      - name: SwiftLint
+        run: |
+          brew list swiftlint >/dev/null 2>&1 || brew install swiftlint
+          cd ios && swiftlint lint --strict --reporter github-actions-logging
+
       - name: Build and Test
         continue-on-error: true
         run: |

@@ -1,6 +1,8 @@
 import XCTest
 
 final class AuraUITestsLaunchTests: XCTestCase {
+    // Overrides an XCTestCase class var, so it cannot be static.
+    // swiftlint:disable:next static_over_final_class
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

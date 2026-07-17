@@ -1,0 +1,32 @@
+#!/bin/sh
+# Lints staged Swift files under ios/ with SwiftLint before every commit.
+# Enable once per clone: git config core.hooksPath .githooks
+
+if ! command -v swiftlint >/dev/null 2>&1; then
+    echo "pre-commit: swiftlint not installed, skipping lint (brew install swiftlint)" >&2
+    exit 0
+fi
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR | grep '^ios/.*\.swift$' || true)
+if [ -z "$staged" ]; then
+    exit 0
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root" || exit 1
+
+# Lint the staged content, not the working tree: with partially staged
+# files the two differ, and only the staged hunks are being committed.
+tmpdir=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmpdir"' EXIT
+
+echo "$staged" | tr '\n' '\0' | xargs -0 git checkout-index --prefix="$tmpdir/" --
+git checkout-index --prefix="$tmpdir/" -- ios/.swiftlint.yml
+
+cd "$tmpdir/ios" || exit 1
+echo "$staged" | sed 's|^ios/||' | tr '\n' '\0' | xargs -0 swiftlint lint --strict --quiet --config .swiftlint.yml
+status=$?
+if [ $status -ne 0 ]; then
+    echo "pre-commit: SwiftLint found violations in staged files; commit aborted." >&2
+fi
+exit $status
