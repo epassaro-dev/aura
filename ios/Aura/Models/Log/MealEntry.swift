@@ -13,7 +13,7 @@ enum MealType: String, Codable, CaseIterable {
     var date: Date
     var mealType: MealType
 
-    @Relationship var foodItems: [FoodItem] = []
+    @Relationship(deleteRule: .nullify) var foodItems: [FoodItem] = []
 
     init(date: Date, mealType: MealType) {
         self.date = date

@@ -32,8 +32,8 @@ enum HeadArea: String, Codable, CaseIterable {
     var endTime: Date?
     var headacheType: HeadacheType
 
-    @Relationship var triggers: [TriggerType] = []
-    @Relationship var tellingSigns: [TellingSignType] = []
+    @Relationship(deleteRule: .nullify) var triggers: [TriggerType] = []
+    @Relationship(deleteRule: .nullify) var tellingSigns: [TellingSignType] = []
 
     @Relationship(deleteRule: .cascade, inverse: \HeadachePainLog.headache)
     var painLogs: [HeadachePainLog] = []
