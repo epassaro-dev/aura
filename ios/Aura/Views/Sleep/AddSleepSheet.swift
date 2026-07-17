@@ -50,8 +50,8 @@ struct AddSleepSheet: View {
         NavigationStack {
             Form {
                 Section("Time") {
-                    DatePicker("Start", selection: $startTime, displayedComponents: [.date, .hourAndMinute])
-                    DatePicker("End", selection: $endTime, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("Start", selection: $startTime, in: ...Date.now, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("End", selection: $endTime, in: ...Date.now, displayedComponents: [.date, .hourAndMinute])
                     HStack {
                         Text("Duration")
                         Spacer()
