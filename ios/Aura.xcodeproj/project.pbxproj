@@ -48,7 +48,6 @@
 		AABF0000000000000000001A /* HeadacheReliefLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001D /* HeadacheReliefLog.swift */; };
 		AABF0000000000000000001B /* HeadachePainLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF10000000000000000001E /* HeadachePainLog.swift */; };
 		ABD6E62B602FF67BDD1249B7 /* TreatmentSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A02326F986F19F51878834C /* TreatmentSchedule.swift */; };
-		B2F73CCF2B60936B4906639D /* CatalogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B3DC13223BD3B6C4F81DA7 /* CatalogItem.swift */; };
 		B9106A07BB448C96DD0A741C /* MedicationProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618F69739D3C5866615C686C /* MedicationProgressTests.swift */; };
 		C63E66FB4FA3B65E8382EFB8 /* MedicationProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01F310FFA40D161BA2F3855 /* MedicationProgress.swift */; };
 		C76878C439ADDE60A0B0CA90 /* DataSeederTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A052A4A7486FD0C6FDDD50 /* DataSeederTests.swift */; };
@@ -132,7 +131,6 @@
 		D3A3CCF03EDA06179F3F1125 /* TreatmentPlanner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TreatmentPlanner.swift; sourceTree = "<group>"; };
 		DDBA9AAD18E4BBBC1E0BE5D3 /* Logger+Aura.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Logger+Aura.swift"; sourceTree = "<group>"; };
 		E9DA4DF039384FBC132DCB2C /* HeadacheCascadeDeleteTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HeadacheCascadeDeleteTests.swift; sourceTree = "<group>"; };
-		F7B3DC13223BD3B6C4F81DA7 /* CatalogItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CatalogItem.swift; sourceTree = "<group>"; };
 		F8E2081A7CCB0CC5ECEC8215 /* MedicationSectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MedicationSectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,7 +283,6 @@
 				AAA100000000000000000009 /* Log */,
 				AAA10000000000000000000A /* Headache */,
 				44C1FB480BCEA55085194B2B /* Treatment */,
-				F7B3DC13223BD3B6C4F81DA7 /* CatalogItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -501,7 +498,6 @@
 				9E8DFE89C0DC75219CAE18F0 /* TreatmentPlanner.swift in Sources */,
 				A63D6CF341245528F3C23E5E /* Logger+Aura.swift in Sources */,
 				1560B2B58CC034D6C2C2C1B5 /* AuraSchema.swift in Sources */,
-				B2F73CCF2B60936B4906639D /* CatalogItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
