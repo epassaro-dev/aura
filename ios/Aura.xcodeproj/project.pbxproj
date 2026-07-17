@@ -23,11 +23,9 @@
 		42D5BE69493DF3672A66DE11 /* SleepSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B1B21B298739B552F8F295 /* SleepSectionView.swift */; };
 		4D16EFB883043A2D5972897B /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50E74ADA9CF9F97C45AAA05 /* TestHelpers.swift */; };
 		57EEB68B08293F6B68AD673E /* MedicineCatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1780A34470127D901C2AB2 /* MedicineCatalogViewModelTests.swift */; };
-		75FC23098E278EE543318F1A /* SleepSectionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89470AC8CA12A4088679C817 /* SleepSectionViewModelTests.swift */; };
 		790426631461258E9C618172 /* AddMedicineSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB7BDB14E2501AFD2D39C7C /* AddMedicineSheet.swift */; };
 		7D45BDC90A91FF3A31683862 /* AddSleepSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF602B32A30FAC84A2A76D8C /* AddSleepSheet.swift */; };
 		81ADE52FECC472DB77A051EF /* DataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0979541B8A046AFEFD15F43A /* DataSeeder.swift */; };
-		93C31FD66DE3EA5D805C451A /* SleepSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730812CBF287D4920F00D59F /* SleepSectionViewModel.swift */; };
 		AABF00000000000000000001 /* AuraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000001 /* AuraApp.swift */; };
 		AABF00000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000002 /* ContentView.swift */; };
 		AABF00000000000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAF100000000000000000003 /* Assets.xcassets */; };
@@ -104,10 +102,8 @@
 		5AD109367CBFD01653957163 /* ManyToManyRelationshipTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ManyToManyRelationshipTests.swift; sourceTree = "<group>"; };
 		6BB095CF4055CCFE47B1274D /* AuraModelContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuraModelContainer.swift; sourceTree = "<group>"; };
 		6D22FF86BEC0F2FD8BC06F50 /* MedicationSectionViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MedicationSectionViewModelTests.swift; sourceTree = "<group>"; };
-		730812CBF287D4920F00D59F /* SleepSectionViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepSectionViewModel.swift; sourceTree = "<group>"; };
 		746126017DC06D37BEF4A76C /* MedicineCatalogSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MedicineCatalogSheet.swift; sourceTree = "<group>"; };
 		83A052A4A7486FD0C6FDDD50 /* DataSeederTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataSeederTests.swift; sourceTree = "<group>"; };
-		89470AC8CA12A4088679C817 /* SleepSectionViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepSectionViewModelTests.swift; sourceTree = "<group>"; };
 		8A63E46618A8E6E87F1F0152 /* CatalogDefaultValueTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CatalogDefaultValueTests.swift; sourceTree = "<group>"; };
 		A0F671999A8B889682E81F09 /* TreatmentScheduleModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TreatmentScheduleModelTests.swift; sourceTree = "<group>"; };
 		AAF100000000000000000001 /* AuraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraApp.swift; sourceTree = "<group>"; };
@@ -197,7 +193,6 @@
 			isa = PBXGroup;
 			children = (
 				7301674D8CA867592E3D9E9F /* Medication */,
-				6D13E1DA7380BAA2DCB9F2D4 /* Sleep */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -216,14 +211,6 @@
 				5A02326F986F19F51878834C /* TreatmentSchedule.swift */,
 			);
 			path = Treatment;
-			sourceTree = "<group>";
-		};
-		6D13E1DA7380BAA2DCB9F2D4 /* Sleep */ = {
-			isa = PBXGroup;
-			children = (
-				730812CBF287D4920F00D59F /* SleepSectionViewModel.swift */,
-			);
-			path = Sleep;
 			sourceTree = "<group>";
 		};
 		7301674D8CA867592E3D9E9F /* Medication */ = {
@@ -309,7 +296,6 @@
 				389D1493F0FACC87471081CB /* SleepDayTests.swift */,
 				618F69739D3C5866615C686C /* MedicationProgressTests.swift */,
 				81FBD0448ADEBA60CB2AE974 /* TreatmentPlannerTests.swift */,
-				89470AC8CA12A4088679C817 /* SleepSectionViewModelTests.swift */,
 			);
 			path = AuraTests;
 			sourceTree = "<group>";
@@ -540,7 +526,6 @@
 				F07CF5C8EF2616131C49B568 /* MedicineCatalogSheet.swift in Sources */,
 				D44C3BD5B4A2BFC1171C285D /* MedicationSectionView.swift in Sources */,
 				81ADE52FECC472DB77A051EF /* DataSeeder.swift in Sources */,
-				93C31FD66DE3EA5D805C451A /* SleepSectionViewModel.swift in Sources */,
 				7D45BDC90A91FF3A31683862 /* AddSleepSheet.swift in Sources */,
 				42D5BE69493DF3672A66DE11 /* SleepSectionView.swift in Sources */,
 				E8D0ADB7493018B1EE2234F4 /* AuraModelContainer.swift in Sources */,
@@ -570,7 +555,6 @@
 				EBF799B4FF6B4BD44C5840D0 /* SleepDayTests.swift in Sources */,
 				B9106A07BB448C96DD0A741C /* MedicationProgressTests.swift in Sources */,
 				6B2BECA46930D4B386D20592 /* TreatmentPlannerTests.swift in Sources */,
-				75FC23098E278EE543318F1A /* SleepSectionViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

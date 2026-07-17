@@ -3,16 +3,34 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var today = Calendar.current.startOfDay(for: .now)
+
+    private var tomorrow: Date {
+        Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                SleepSectionView(context: context)
+                SleepSectionView(day: today, nextDay: tomorrow)
                 MedicationSectionView(context: context)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged).receive(on: RunLoop.main)) { _ in
+            refreshToday()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                refreshToday()
+            }
+        }
+    }
+
+    private func refreshToday() {
+        today = Calendar.current.startOfDay(for: .now)
     }
 }
 

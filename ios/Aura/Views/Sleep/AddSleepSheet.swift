@@ -1,20 +1,18 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct AddSleepSheet: View {
-    private let context: ModelContext
     private let type: SleepType
-    private let onSave: () -> Void
 
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @State private var startTime: Date
     @State private var endTime: Date
     @State private var quality: Int = 3
-    @Environment(\.dismiss) private var dismiss
 
-    init(context: ModelContext, type: SleepType, onSave: @escaping () -> Void) {
-        self.context = context
+    init(type: SleepType) {
         self.type = type
-        self.onSave = onSave
         let now = Date.now
         let calendar = Calendar.current
         if type == .night {
@@ -32,15 +30,6 @@ struct AddSleepSheet: View {
 
     private var duration: TimeInterval {
         max(0, endTime.timeIntervalSince(startTime))
-    }
-
-    private var durationText: String {
-        let hours = Int(duration) / 3600
-        let minutes = (Int(duration) % 3600) / 60
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        }
-        return "\(minutes)m"
     }
 
     private var qualityLabel: String {
@@ -63,7 +52,7 @@ struct AddSleepSheet: View {
                     HStack {
                         Text("Duration")
                         Spacer()
-                        Text(durationText)
+                        Text(SleepDay.durationText(from: duration))
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -101,17 +90,19 @@ struct AddSleepSheet: View {
     }
 
     private func save() {
-        let today = Calendar.current.startOfDay(for: .now)
         let entry = SleepEntry(
-            date: today,
+            date: SleepDay.dayAnchor(forSleepEnding: endTime),
             type: type,
             startTime: startTime,
             endTime: endTime,
             quality: quality
         )
         context.insert(entry)
-        try? context.save()
-        onSave()
+        do {
+            try context.save()
+        } catch {
+            Logger.persistence.error("Failed to save sleep entry: \(String(describing: error), privacy: .public)")
+        }
         dismiss()
     }
 }
@@ -119,13 +110,13 @@ struct AddSleepSheet: View {
 #Preview("Night sleep") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    return AddSleepSheet(context: container.mainContext, type: .night) {}
+    return AddSleepSheet(type: .night)
         .modelContainer(container)
 }
 
 #Preview("Nap") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    return AddSleepSheet(context: container.mainContext, type: .nap) {}
+    return AddSleepSheet(type: .nap)
         .modelContainer(container)
 }
