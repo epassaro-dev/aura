@@ -10,9 +10,6 @@ jobs:
     runs-on: macos-26
     permissions:
       contents: read
-      issues: read
-      checks: write
-      pull-requests: write
 
     steps:
       - name: Checkout
@@ -27,13 +24,12 @@ jobs:
           cd ios && swiftlint lint --strict --reporter github-actions-logging
 
       - name: Build and Test
-        continue-on-error: true
         run: |
           set -o pipefail
           xcodebuild \
             -project ios/Aura.xcodeproj \
             -scheme Aura \
-            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.4' \
+            -destination 'platform=iOS Simulator,name=iPhone 17' \
             -configuration Debug \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \

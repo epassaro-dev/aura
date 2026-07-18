@@ -36,23 +36,7 @@ Main development platform.
 
 **Stack:** SwiftUI, SwiftData
 
-**Build & test** (requires Xcode):
-
-```bash
-xcodebuild \
-  -project ios/Aura.xcodeproj \
-  -scheme Aura \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.4' \
-  -configuration Debug \
-  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
-  test | xcbeautify
-```
-
-**Key config:** `AuraApp.swift` creates the `ModelContainer` via `ModelContainer.makeAuraContainer()`. The schema is versioned: add new SwiftData model types to `AuraSchemaV1.models` in `Aura/AuraSchema.swift`; schema changes after release need a new `VersionedSchema` plus a stage in `AuraMigrationPlan`.
-
-**Test plan:** `ios/Aura.xctestplan` is the explicit, version-controlled test plan referenced by the scheme. Add new test targets there — do not re-enable `shouldAutocreateTestPlan` in the scheme.
-
-**Local test run** (omit `OS=` — the version in the CI workflow targets the CI machine's runtimes):
+**Build & test** (requires Xcode; same command locally and in CI — no `OS=` pin, the newest installed runtime is used):
 
 ```bash
 xcodebuild \
@@ -63,6 +47,10 @@ xcodebuild \
   CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
   test | xcbeautify
 ```
+
+**Key config:** `AuraApp.swift` creates the `ModelContainer` via `ModelContainer.makeAuraContainer()`. The schema is versioned: add new SwiftData model types to `AuraSchemaV1.models` in `Aura/AuraSchema.swift`; schema changes after release need a new `VersionedSchema` plus a stage in `AuraMigrationPlan`.
+
+**Test plan:** `ios/Aura.xctestplan` is the explicit, version-controlled test plan referenced by the scheme. Add new test targets there — do not re-enable `shouldAutocreateTestPlan` in the scheme.
 
 **SwiftData model architecture:**
 
