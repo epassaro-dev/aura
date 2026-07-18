@@ -1,19 +1,27 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct TreatmentScheduleSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     let medicine: Medicine
-    var onSave: () -> Void
+    var onSaved: () -> Void = {}
     @State private var timesPerDay = 1
+    @State private var showSaveError = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Label(medicine.name, systemImage: medicine.sfSymbol)
-                        .font(.headline)
+                    HStack {
+                        Label(medicine.name, systemImage: medicine.sfSymbol)
+                            .font(.headline)
+                        if let dosage = medicine.defaultDosage {
+                            Spacer()
+                            Text(dosage)
+                        }
+                    }
                 }
                 Section("Daily schedule") {
                     Stepper(
@@ -30,24 +38,35 @@ struct TreatmentScheduleSheet: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let vm = TreatmentScheduleViewModel(context: context, medicine: medicine)
-                        vm.timesPerDay = timesPerDay
-                        vm.save()
-                        onSave()
-                        dismiss()
-                    }
+                    Button("Save") { save() }
                 }
             }
+            .alert("Couldn't Save Schedule", isPresented: $showSaveError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Something went wrong while saving. Your schedule hasn't been stored — please try again.")
+            }
+        }
+    }
+
+    private func save() {
+        context.insert(TreatmentPlanner.replaceSchedule(for: medicine, timesPerDay: timesPerDay))
+        do {
+            try context.save()
+            dismiss()
+            onSaved()
+        } catch {
+            Logger.persistence.error("Failed to save treatment schedule: \(String(describing: error), privacy: .public)")
+            // Discard the pending insert and the in-place deactivation of the
+            // previous schedules so autosave can't persist them behind the user's back.
+            context.rollback()
+            showSaveError = true
         }
     }
 }
 
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Medicine.self, configurations: config)
-    let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
-    container.mainContext.insert(medicine)
-    return TreatmentScheduleSheet(medicine: medicine, onSave: {})
-        .modelContainer(container)
+#Preview(traits: .modifier(MedicationPreviewData())) {
+    QueryPreview { (medicine: Medicine) in
+        TreatmentScheduleSheet(medicine: medicine)
+    }
 }

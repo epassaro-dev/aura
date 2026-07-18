@@ -1,13 +1,21 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct SleepSectionView: View {
-    private let context: ModelContext
-    @State private var viewModel: SleepSectionViewModel
+    @Environment(\.modelContext) private var context
+    @Query private var entries: [SleepEntry]
+    @State private var showAddNight = false
+    @State private var showAddNap = false
 
-    init(context: ModelContext) {
-        self.context = context
-        _viewModel = State(wrappedValue: SleepSectionViewModel(context: context))
+    init(day: Date, nextDay: Date) {
+        _entries = Query(filter: #Predicate<SleepEntry> { entry in
+            entry.date >= day && entry.date < nextDay
+        })
+    }
+
+    private var sleepDay: SleepDay {
+        SleepDay(entries: entries)
     }
 
     var body: some View {
@@ -15,33 +23,29 @@ struct SleepSectionView: View {
             Text("Sleep")
                 .font(.headline)
 
-            if let night = viewModel.nightSleep {
+            if let night = sleepDay.nightSleep {
                 sleepRow(entry: night)
             } else {
                 Button("Log night sleep") {
-                    viewModel.showAddNight = true
+                    showAddNight = true
                 }
                 .buttonStyle(.borderedProminent)
             }
 
-            ForEach(viewModel.naps) { nap in
+            ForEach(sleepDay.naps) { nap in
                 sleepRow(entry: nap)
             }
 
             Button("Add nap") {
-                viewModel.showAddNap = true
+                showAddNap = true
             }
             .buttonStyle(.bordered)
         }
-        .sheet(isPresented: $viewModel.showAddNight) {
-            AddSleepSheet(context: context, type: .night) {
-                viewModel.fetch()
-            }
+        .sheet(isPresented: $showAddNight) {
+            AddSleepSheet(type: .night)
         }
-        .sheet(isPresented: $viewModel.showAddNap) {
-            AddSleepSheet(context: context, type: .nap) {
-                viewModel.fetch()
-            }
+        .sheet(isPresented: $showAddNap) {
+            AddSleepSheet(type: .nap)
         }
     }
 
@@ -65,21 +69,24 @@ struct SleepSectionView: View {
         .padding(.vertical, 4)
         .contextMenu {
             Button(role: .destructive) {
-                viewModel.delete(entry)
+                delete(entry)
             } label: {
                 Label("Delete", systemImage: "trash")
             }
         }
     }
 
-    private func durationText(for entry: SleepEntry) -> String {
-        let interval = entry.endTime.timeIntervalSince(entry.startTime)
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
+    private func delete(_ entry: SleepEntry) {
+        context.delete(entry)
+        do {
+            try context.save()
+        } catch {
+            Logger.persistence.error("Failed to delete sleep entry: \(String(describing: error), privacy: .public)")
         }
-        return "\(minutes)m"
+    }
+
+    private func durationText(for entry: SleepEntry) -> String {
+        SleepDay.durationText(from: entry.endTime.timeIntervalSince(entry.startTime))
     }
 
     private func qualityStars(_ quality: Int) -> String {
@@ -87,40 +94,23 @@ struct SleepSectionView: View {
     }
 }
 
-#Preview("Empty state") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    return SleepSectionView(context: container.mainContext)
-        .modelContainer(container)
+#Preview("Empty state", traits: .modifier(EmptyPreviewData())) {
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Night sleep logged") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: .now)
-    let start = calendar.date(byAdding: .hour, value: -8, to: .now) ?? .now
-    let entry = SleepEntry(date: today, type: .night, startTime: start, endTime: .now, quality: 4)
-    container.mainContext.insert(entry)
-    return SleepSectionView(context: container.mainContext)
-        .modelContainer(container)
+#Preview("Night sleep logged", traits: .modifier(NightSleepPreviewData())) {
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Night sleep and nap") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: SleepEntry.self, configurations: config)
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: .now)
-    let nightStart = calendar.date(byAdding: .hour, value: -9, to: .now) ?? .now
-    let nightEnd = calendar.date(byAdding: .hour, value: -1, to: .now) ?? .now
-    let night = SleepEntry(date: today, type: .night, startTime: nightStart, endTime: nightEnd, quality: 3)
-    let napStart = calendar.date(byAdding: .minute, value: -45, to: .now) ?? .now
-    let nap = SleepEntry(date: today, type: .nap, startTime: napStart, endTime: .now, quality: 5)
-    container.mainContext.insert(night)
-    container.mainContext.insert(nap)
-    return SleepSectionView(context: container.mainContext)
-        .modelContainer(container)
+#Preview("Night sleep and nap", traits: .modifier(FullSleepPreviewData())) {
+    let today = Calendar.current.startOfDay(for: .now)
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+    SleepSectionView(day: today, nextDay: tomorrow)
         .padding()
 }

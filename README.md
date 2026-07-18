@@ -76,7 +76,7 @@ This part of the project will likely evolve the most visibly over time, includin
 ## Tech stack
 
 | | iOS | Android |
-|---|---|---|
+| --- | --- | --- |
 | Language | Swift | Kotlin |
 | UI | SwiftUI | Jetpack Compose |
 | Min. target | iOS 26 | Android 16 (API 36) |
@@ -87,7 +87,7 @@ Cross-platform (Flutter) and backend (.NET) components will be added to this tab
 
 ## Repository structure
 
-```
+```text
 .
 ├── ios/                  # Native iOS app (Swift, SwiftUI)
 ├── android/              # Native Android app (Kotlin, Jetpack Compose)

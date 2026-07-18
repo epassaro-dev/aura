@@ -24,3 +24,14 @@ import SwiftData
         self.defaultDosage = defaultDosage
     }
 }
+
+extension Medicine {
+    /// Soft-deletes the medicine and retires any active treatment schedule with it,
+    /// so archived medicines disappear from the daily plan while their logs remain.
+    func archive() {
+        isArchived = true
+        for schedule in schedules where schedule.isActive {
+            schedule.isActive = false
+        }
+    }
+}
