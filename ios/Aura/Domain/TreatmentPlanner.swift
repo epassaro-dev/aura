@@ -31,12 +31,10 @@ enum TreatmentPlanner {
         )
     }
 
-    /// Builds a custom medicine, or nil for a blank name. Blank dosages become nil.
-    static func makeMedicine(name: String, defaultDosage: String?) -> Medicine? {
+    /// Builds a custom medicine, or nil for a blank name.
+    static func makeMedicine(name: String, defaultDosage: Dosage?) -> Medicine? {
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else { return nil }
-        let trimmedDosage = defaultDosage?.trimmingCharacters(in: .whitespaces)
-        let finalDosage = (trimmedDosage?.isEmpty == false) ? trimmedDosage : nil
-        return Medicine(name: trimmedName, sfSymbol: "pills.fill", defaultDosage: finalDosage)
+        return Medicine(name: trimmedName, sfSymbol: "pills.fill", defaultDosage: defaultDosage)
     }
 }

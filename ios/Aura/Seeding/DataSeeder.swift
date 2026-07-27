@@ -8,12 +8,12 @@ enum DataSeeder {
     }
 
     private static func seedMedicines(context: ModelContext) {
-        let defaults: [(name: String, dosage: String)] = [
-            ("Propranolol", "40 mg"),
-            ("Topiramate", "25 mg"),
-            ("Amitriptyline", "10 mg"),
-            ("Valproate", "500 mg"),
-            ("Magnesium", "400 mg"),
+        let defaults: [(name: String, dosage: Dosage)] = [
+            ("Propranolol", Dosage(amount: "40", unit: .mg)),
+            ("Topiramate", Dosage(amount: "25", unit: .mg)),
+            ("Amitriptyline", Dosage(amount: "10", unit: .mg)),
+            ("Valproate", Dosage(amount: "500", unit: .mg)),
+            ("Magnesium", Dosage(amount: "400", unit: .mg)),
         ]
 
         for entry in defaults {

@@ -58,7 +58,7 @@ final class CatalogNullifyTests: XCTestCase {
     }
 
     func testDeletingMedicineNullifiesMedicineLog() throws {
-        let medicine = Medicine(name: "Ibuprofen", sfSymbol: "pills.fill", defaultDosage: "400mg")
+        let medicine = Medicine(name: "Ibuprofen", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "400", unit: .mg))
         let log = MedicineLog(date: .now, timestamp: .now, medicine: medicine)
         context.insert(medicine)
         context.insert(log)

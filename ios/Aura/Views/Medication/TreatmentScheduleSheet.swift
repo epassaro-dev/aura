@@ -19,7 +19,7 @@ struct TreatmentScheduleSheet: View {
                             .font(.headline)
                         if let dosage = medicine.defaultDosage {
                             Spacer()
-                            Text(dosage)
+                            Text(dosage.asString())
                         }
                     }
                 }

@@ -1,21 +1,10 @@
 import SwiftUI
 
-private enum DosageUnit: String, CaseIterable {
-    case mg, mcg, g, ml, IU, drops, tablet
-}
-
 struct AddMedicineSheet: View {
     @Environment(\.dismiss) private var dismiss
-    var onAdd: (String, String?) -> Void
+    var onAdd: (String, Dosage?) -> Void
     @State private var name = ""
-    @State private var dosageAmount = ""
-    @State private var dosageUnit: DosageUnit = .mg
-
-    private var combinedDosage: String? {
-        let trimmed = dosageAmount.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return nil }
-        return "\(trimmed) \(dosageUnit.rawValue)"
-    }
+    @State private var dosage: Dosage?
 
     var body: some View {
         NavigationStack {
@@ -23,15 +12,7 @@ struct AddMedicineSheet: View {
                 Section("Medicine name") {
                     TextField("e.g. Ibuprofen", text: $name)
                 }
-                Section("Default dosage (optional)") {
-                    TextField("Amount", text: $dosageAmount)
-                        .keyboardType(.decimalPad)
-                    Picker("Unit", selection: $dosageUnit) {
-                        ForEach(DosageUnit.allCases, id: \.self) { unit in
-                            Text(unit.rawValue).tag(unit)
-                        }
-                    }
-                }
+                DosageSectionView(title: "Default dosage (optional)", dosage: $dosage)
             }
             .navigationTitle("Add Medication")
             .navigationBarTitleDisplayMode(.inline)
@@ -41,7 +22,7 @@ struct AddMedicineSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        onAdd(name, combinedDosage)
+                        onAdd(name, $dosage.wrappedValue)
                         dismiss()
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)

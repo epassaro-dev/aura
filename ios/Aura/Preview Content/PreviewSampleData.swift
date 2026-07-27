@@ -54,24 +54,24 @@ struct FullSleepPreviewData: SampleDataPreviewModifier {
 /// one dose already taken today.
 struct MedicationPreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
-        let propranolol = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
-        let topiramate = Medicine(name: "Topiramate", sfSymbol: "pills.fill", defaultDosage: "25mg")
+        let propranolol = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "40", unit: .mg))
+        let topiramate = Medicine(name: "Topiramate", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "25", unit: .mg))
         let amitriptyline = Medicine(name: "Amitriptyline", sfSymbol: "pills.fill")
         [propranolol, topiramate, amitriptyline].forEach { context.insert($0) }
         context.insert(TreatmentSchedule(medicine: propranolol, timesPerDay: 2))
         let today = Calendar.current.startOfDay(for: .now)
-        context.insert(MedicineLog(date: today, timestamp: .now, medicine: propranolol, dosage: "40mg"))
+        context.insert(MedicineLog(date: today, timestamp: .now, medicine: propranolol, dosage: Dosage(amount: "40", unit: .mg)))
     }
 }
 
 /// A single 1×/day schedule with its dose already taken today.
 struct CompletedMedicationPreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40mg")
+        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "40", unit: .mg))
         context.insert(medicine)
         context.insert(TreatmentSchedule(medicine: medicine, timesPerDay: 1))
         let today = Calendar.current.startOfDay(for: .now)
-        context.insert(MedicineLog(date: today, timestamp: .now, medicine: medicine, dosage: "40mg"))
+        context.insert(MedicineLog(date: today, timestamp: .now, medicine: medicine, dosage: Dosage(amount: "40", unit: .mg)))
     }
 }
 

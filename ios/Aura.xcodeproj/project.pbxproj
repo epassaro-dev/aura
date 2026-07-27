@@ -10,6 +10,8 @@
 		1560B2B58CC034D6C2C2C1B5 /* AuraSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC387A1F37B9A3EC6F2CE0A5 /* AuraSchema.swift */; };
 		15AEEF60DAFB7B0DC11067F7 /* ManyToManyRelationshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD109367CBFD01653957163 /* ManyToManyRelationshipTests.swift */; };
 		288758D891D018800E421E79 /* HeadacheCascadeDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4DF039384FBC132DCB2C /* HeadacheCascadeDeleteTests.swift */; };
+		34494F0F3012ACD2004550E4 /* DosageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34494F0E3012ACD2004550E4 /* DosageSectionView.swift */; };
+		34494F113012B672004550E4 /* Dosage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34494F103012B66E004550E4 /* Dosage.swift */; };
 		34DB3490300AA0FC002ED895 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DB348F300AA0FC002ED895 /* PreviewSampleData.swift */; };
 		3D1C6A60FFC386DD59E999FB /* TreatmentScheduleSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F8BED80984FE3014FA5D3A /* TreatmentScheduleSheet.swift */; };
 		42D5BE69493DF3672A66DE11 /* SleepSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B1B21B298739B552F8F295 /* SleepSectionView.swift */; };
@@ -80,6 +82,8 @@
 /* Begin PBXFileReference section */
 		0979541B8A046AFEFD15F43A /* DataSeeder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataSeeder.swift; sourceTree = "<group>"; };
 		26F8BED80984FE3014FA5D3A /* TreatmentScheduleSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TreatmentScheduleSheet.swift; sourceTree = "<group>"; };
+		34494F0E3012ACD2004550E4 /* DosageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DosageSectionView.swift; sourceTree = "<group>"; };
+		34494F103012B66E004550E4 /* Dosage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dosage.swift; sourceTree = "<group>"; };
 		34DB348F300AA0FC002ED895 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
 		389D1493F0FACC87471081CB /* SleepDayTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepDayTests.swift; sourceTree = "<group>"; };
 		52B1B21B298739B552F8F295 /* SleepSectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepSectionView.swift; sourceTree = "<group>"; };
@@ -196,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				AFB7BDB14E2501AFD2D39C7C /* AddMedicineSheet.swift */,
+				34494F0E3012ACD2004550E4 /* DosageSectionView.swift */,
 				26F8BED80984FE3014FA5D3A /* TreatmentScheduleSheet.swift */,
 				746126017DC06D37BEF4A76C /* MedicineCatalogSheet.swift */,
 				F8E2081A7CCB0CC5ECEC8215 /* MedicationSectionView.swift */,
@@ -243,16 +248,16 @@
 		AAA100000000000000000004 /* AuraTests */ = {
 			isa = PBXGroup;
 			children = (
-				B50E74ADA9CF9F97C45AAA05 /* TestHelpers.swift */,
-				E9DA4DF039384FBC132DCB2C /* HeadacheCascadeDeleteTests.swift */,
-				D271140C9CBCABAD481DA097 /* CatalogNullifyTests.swift */,
-				5AD109367CBFD01653957163 /* ManyToManyRelationshipTests.swift */,
 				8A63E46618A8E6E87F1F0152 /* CatalogDefaultValueTests.swift */,
-				A0F671999A8B889682E81F09 /* TreatmentScheduleModelTests.swift */,
+				D271140C9CBCABAD481DA097 /* CatalogNullifyTests.swift */,
 				83A052A4A7486FD0C6FDDD50 /* DataSeederTests.swift */,
-				389D1493F0FACC87471081CB /* SleepDayTests.swift */,
+				E9DA4DF039384FBC132DCB2C /* HeadacheCascadeDeleteTests.swift */,
+				5AD109367CBFD01653957163 /* ManyToManyRelationshipTests.swift */,
 				618F69739D3C5866615C686C /* MedicationProgressTests.swift */,
+				389D1493F0FACC87471081CB /* SleepDayTests.swift */,
+				B50E74ADA9CF9F97C45AAA05 /* TestHelpers.swift */,
 				81FBD0448ADEBA60CB2AE974 /* TreatmentPlannerTests.swift */,
+				A0F671999A8B889682E81F09 /* TreatmentScheduleModelTests.swift */,
 			);
 			path = AuraTests;
 			sourceTree = "<group>";
@@ -279,6 +284,7 @@
 		AAA100000000000000000007 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				34494F103012B66E004550E4 /* Dosage.swift */,
 				AAA100000000000000000008 /* Catalog */,
 				AAA100000000000000000009 /* Log */,
 				AAA10000000000000000000A /* Headache */,
@@ -475,9 +481,11 @@
 				AABF00000000000000000011 /* FeelingEntry.swift in Sources */,
 				AABF00000000000000000012 /* MedicineLog.swift in Sources */,
 				AABF00000000000000000013 /* ActivityEntry.swift in Sources */,
+				34494F113012B672004550E4 /* Dosage.swift in Sources */,
 				34DB3490300AA0FC002ED895 /* PreviewSampleData.swift in Sources */,
 				AABF00000000000000000014 /* MealEntry.swift in Sources */,
 				AABF00000000000000000015 /* TriggerEntry.swift in Sources */,
+				34494F0F3012ACD2004550E4 /* DosageSectionView.swift in Sources */,
 				AABF00000000000000000016 /* SymptomEntry.swift in Sources */,
 				AABF00000000000000000017 /* HeadacheEntry.swift in Sources */,
 				AABF00000000000000000018 /* HeadacheSymptomLog.swift in Sources */,

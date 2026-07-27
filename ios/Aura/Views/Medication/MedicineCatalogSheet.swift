@@ -47,7 +47,7 @@ struct MedicineCatalogSheet: View {
         }
     }
 
-    private func addMedicine(name: String, dosage: String?) {
+    private func addMedicine(name: String, dosage: Dosage?) {
         guard let medicine = TreatmentPlanner.makeMedicine(name: name, defaultDosage: dosage) else { return }
         context.insert(medicine)
         do {

@@ -63,8 +63,9 @@ final class TreatmentPlannerTests: XCTestCase {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Rome")!
         let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 9, hour: 8, minute: 30))!
+        let dosage = Dosage(amount: "40", unit: .mg)
 
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40 mg")
+        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: dosage)
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
         context.insert(schedule)
@@ -79,7 +80,7 @@ final class TreatmentPlannerTests: XCTestCase {
 
         XCTAssertEqual(log.date, calendar.startOfDay(for: now))
         XCTAssertEqual(log.timestamp, now)
-        XCTAssertEqual(log.dosage, "40 mg")
+        XCTAssertEqual(log.dosage, dosage)
     }
 
     func testDoseLogIsNilOnceCompleted() throws {
@@ -108,20 +109,14 @@ final class TreatmentPlannerTests: XCTestCase {
     // MARK: - makeMedicine
 
     func testMakeMedicineTrimsNameAndKeepsDosage() {
-        let medicine = TreatmentPlanner.makeMedicine(name: "  Metoprolol ", defaultDosage: "50mg")
+        let medicine = TreatmentPlanner.makeMedicine(name: "  Metoprolol ", defaultDosage: Dosage(amount: "50", unit: .ml))
         XCTAssertEqual(medicine?.name, "Metoprolol")
         XCTAssertEqual(medicine?.sfSymbol, "pills.fill")
-        XCTAssertEqual(medicine?.defaultDosage, "50mg")
+        XCTAssertEqual(medicine?.defaultDosage, Dosage(amount: "50", unit: .ml))
     }
 
     func testMakeMedicineWithBlankNameIsNil() {
         XCTAssertNil(TreatmentPlanner.makeMedicine(name: "   ", defaultDosage: nil))
-    }
-
-    func testMakeMedicineWithBlankDosageStoresNil() {
-        let medicine = TreatmentPlanner.makeMedicine(name: "Aspirin", defaultDosage: "  ")
-        XCTAssertNotNil(medicine)
-        XCTAssertNil(medicine?.defaultDosage)
     }
 
     // MARK: - Medicine.archive
