@@ -106,19 +106,6 @@ final class TreatmentPlannerTests: XCTestCase {
         XCTAssertNil(TreatmentPlanner.doseLog(for: schedule, progress: try progress(for: schedule)))
     }
 
-    // MARK: - makeMedicine
-
-    func testMakeMedicineTrimsNameAndKeepsDosage() {
-        let medicine = TreatmentPlanner.makeMedicine(name: "  Metoprolol ", defaultDosage: Dosage(amount: "50", unit: .ml))
-        XCTAssertEqual(medicine?.name, "Metoprolol")
-        XCTAssertEqual(medicine?.sfSymbol, "pills.fill")
-        XCTAssertEqual(medicine?.defaultDosage, Dosage(amount: "50", unit: .ml))
-    }
-
-    func testMakeMedicineWithBlankNameIsNil() {
-        XCTAssertNil(TreatmentPlanner.makeMedicine(name: "   ", defaultDosage: nil))
-    }
-
     // MARK: - Medicine.archive
 
     func testArchiveDeactivatesActiveSchedules() throws {

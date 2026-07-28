@@ -39,7 +39,7 @@ struct DosageSectionView: View {
             _dosage.wrappedValue = nil
             return
         }
-        _dosage.wrappedValue = Dosage(amount: amount, unit: unit)
+        _dosage.wrappedValue = Dosage(amount: amount.trimmingCharacters(in: .whitespaces), unit: unit)
     }
 }
 

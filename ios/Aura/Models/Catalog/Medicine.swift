@@ -3,7 +3,6 @@ import SwiftData
 @Model final class Medicine {
     var name: String
     var sfSymbol: String
-    var isDefault: Bool
     var isArchived: Bool
     var defaultDosage: Dosage?
 
@@ -16,10 +15,9 @@ import SwiftData
     @Relationship(deleteRule: .cascade, inverse: \TreatmentSchedule.medicine)
     var schedules: [TreatmentSchedule] = []
 
-    init(name: String, sfSymbol: String, isDefault: Bool = false, isArchived: Bool = false, defaultDosage: Dosage? = nil) {
+    init(name: String, sfSymbol: String, isArchived: Bool = false, defaultDosage: Dosage? = nil) {
         self.name = name
         self.sfSymbol = sfSymbol
-        self.isDefault = isDefault
         self.isArchived = isArchived
         self.defaultDosage = defaultDosage
     }

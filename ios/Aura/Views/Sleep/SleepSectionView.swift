@@ -43,10 +43,10 @@ struct SleepSectionView: View {
             .buttonStyle(.bordered)
         }
         .sheet(isPresented: $showAddNight) {
-            LogSleepSheet(mode: .add(.night))
+            LogSleepSheet(mode: .create(.night))
         }
         .sheet(isPresented: $showAddNap) {
-            LogSleepSheet(mode: .add(.nap))
+            LogSleepSheet(mode: .create(.nap))
         }
         .sheet(item: $editingEntry) { entry in
             LogSleepSheet(mode: .edit(entry))

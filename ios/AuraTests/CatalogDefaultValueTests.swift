@@ -10,7 +10,6 @@ final class CatalogDefaultValueTests: XCTestCase {
 
     func testMedicineDefaultValues() {
         let medicine = Medicine(name: "Aspirin", sfSymbol: "pills")
-        XCTAssertFalse(medicine.isDefault)
         XCTAssertFalse(medicine.isArchived)
         XCTAssertNil(medicine.defaultDosage)
     }

@@ -3,7 +3,7 @@ import SwiftData
 import OSLog
 
 enum LogSleepSheetMode {
-    case add(SleepType)
+    case create(SleepType)
     case edit(SleepEntry)
 }
 
@@ -24,7 +24,7 @@ struct LogSleepSheet: View {
         let calendar = Calendar.current
 
         switch mode {
-        case .add(let type):
+        case .create(let type):
             self.type = type
             if type == .night {
                 let yesterday = calendar.date(byAdding: .day, value: -1, to: now) ?? now
@@ -98,10 +98,10 @@ struct LogSleepSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel", role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
+                    Button("Save", role: .confirm) { save() }
                         .disabled(endTime <= startTime)
                 }
             }
@@ -115,7 +115,7 @@ struct LogSleepSheet: View {
 
     private func save() {
         switch mode {
-        case .add:
+        case .create:
             let entry = SleepEntry(
                 date: SleepDay.dayAnchor(forSleepEnding: endTime),
                 type: type,
@@ -145,11 +145,11 @@ struct LogSleepSheet: View {
 }
 
 #Preview("Night sleep", traits: .modifier(EmptyPreviewData())) {
-    LogSleepSheet(mode: .add(.night))
+    LogSleepSheet(mode: .create(.night))
 }
 
 #Preview("Nap", traits: .modifier(EmptyPreviewData())) {
-    LogSleepSheet(mode: .add(.nap))
+    LogSleepSheet(mode: .create(.nap))
 }
 
 #Preview("Edit night sleep", traits: .modifier(NightSleepPreviewData())) {

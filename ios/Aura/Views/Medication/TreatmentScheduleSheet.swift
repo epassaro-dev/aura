@@ -35,10 +35,10 @@ struct TreatmentScheduleSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel", role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
+                    Button("Save", role: .confirm) { save() }
                 }
             }
             .alert("Couldn't Save Schedule", isPresented: $showSaveError) {

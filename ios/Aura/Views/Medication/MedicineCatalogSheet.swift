@@ -8,6 +8,7 @@ struct MedicineCatalogSheet: View {
     @Query(filter: #Predicate<Medicine> { $0.isArchived == false }, sort: \Medicine.name)
     private var medicines: [Medicine]
     @State private var showAddMedicine = false
+    @State private var editingEntry: Medicine?
     @State private var selectedMedicine: Medicine?
 
     var body: some View {
@@ -17,8 +18,26 @@ struct MedicineCatalogSheet: View {
                     Button {
                         selectedMedicine = medicine
                     } label: {
-                        Label(medicine.name, systemImage: medicine.sfSymbol)
-                            .foregroundStyle(.primary)
+                        HStack {
+                            Label(medicine.name, systemImage: medicine.sfSymbol)
+                                .foregroundStyle(.primary)
+                            if let dosage = medicine.defaultDosage {
+                                Spacer()
+                                Text(dosage.asString())
+                            }
+                        }
+                    }
+                    .contextMenu {
+                        Button {
+                            editingEntry = medicine
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        Button(role: .destructive) {
+                            archive(medicine)
+                        } label: {
+                            Label("Archive", systemImage: "archivebox")
+                        }
                     }
                 }
                 Button {
@@ -31,13 +50,14 @@ struct MedicineCatalogSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel", role: .cancel) { dismiss() }
                 }
             }
             .sheet(isPresented: $showAddMedicine) {
-                AddMedicineSheet { name, dosage in
-                    addMedicine(name: name, dosage: dosage)
-                }
+                MedicineSheet(mode: .create)
+            }
+            .sheet(item: $editingEntry) { medicine in
+                MedicineSheet(mode: .edit(medicine))
             }
             .sheet(item: $selectedMedicine) { medicine in
                 TreatmentScheduleSheet(medicine: medicine) {
@@ -47,13 +67,12 @@ struct MedicineCatalogSheet: View {
         }
     }
 
-    private func addMedicine(name: String, dosage: Dosage?) {
-        guard let medicine = TreatmentPlanner.makeMedicine(name: name, defaultDosage: dosage) else { return }
-        context.insert(medicine)
+    private func archive(_ medicine: Medicine) {
+        medicine.archive()
         do {
             try context.save()
         } catch {
-            Logger.persistence.error("Failed to add medicine: \(String(describing: error), privacy: .public)")
+            Logger.persistence.error("Failed to archive medicine: \(String(describing: error), privacy: .public)")
         }
     }
 }

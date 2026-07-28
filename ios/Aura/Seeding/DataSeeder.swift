@@ -16,24 +16,17 @@ enum DataSeeder {
             ("Magnesium", Dosage(amount: "400", unit: .mg)),
         ]
 
+        do {
+            if try context.fetch(FetchDescriptor<Medicine>()).count > 0 { return }
+        } catch {
+            Logger.seeding.error("Failed to check if medicines are seeded: \(String(describing: error), privacy: .public)")
+            return
+        }
+
         for entry in defaults {
-            let entryName = entry.name
-            let descriptor = FetchDescriptor<Medicine>(
-                predicate: #Predicate<Medicine> { medicine in
-                    medicine.name == entryName && medicine.isDefault == true
-                }
-            )
-            do {
-                guard try context.fetch(descriptor).isEmpty else { continue }
-            } catch {
-                let details = String(describing: error)
-                Logger.seeding.error("Failed to look up default medicine \(entryName, privacy: .public): \(details, privacy: .public)")
-                continue
-            }
             context.insert(Medicine(
                 name: entry.name,
                 sfSymbol: "pills.fill",
-                isDefault: true,
                 defaultDosage: entry.dosage
             ))
         }

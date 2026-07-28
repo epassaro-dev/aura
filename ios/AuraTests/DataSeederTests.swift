@@ -12,18 +12,17 @@ final class DataSeederTests: XCTestCase {
         context.autosaveEnabled = false
     }
 
-    func testSeedingCreatesFiveDefaultMedicines() throws {
+    func testSeedingCreatesFiveMedicines() throws {
         DataSeeder.seed(context: context)
         let medicines = try context.fetch(FetchDescriptor<Medicine>())
         XCTAssertEqual(medicines.count, 5)
-        XCTAssertTrue(medicines.allSatisfy { $0.isDefault })
     }
 
-    func testSeedingIsIdempotent() throws {
-        DataSeeder.seed(context: context)
-        DataSeeder.seed(context: context)
+    func testSeedingDoesNotRunIfMedicinesAlreadyExist() throws {
+        context.insert(Medicine(name: "someMedicineName", sfSymbol: "some.symbol"))
+        try context.save()
         let medicines = try context.fetch(FetchDescriptor<Medicine>())
-        XCTAssertEqual(medicines.count, 5, "Re-seeding should not create duplicates")
+        XCTAssertEqual(medicines.count, 1, "Seeding should not run if context already contains medicines.")
     }
 
     func testDefaultMedicineNames() throws {

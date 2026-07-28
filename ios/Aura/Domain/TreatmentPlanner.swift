@@ -30,11 +30,4 @@ enum TreatmentPlanner {
             dosage: medicine.defaultDosage
         )
     }
-
-    /// Builds a custom medicine, or nil for a blank name.
-    static func makeMedicine(name: String, defaultDosage: Dosage?) -> Medicine? {
-        let trimmedName = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return nil }
-        return Medicine(name: trimmedName, sfSymbol: "pills.fill", defaultDosage: defaultDosage)
-    }
 }
