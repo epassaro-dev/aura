@@ -93,17 +93,6 @@ struct MySection: View {
 
 **Adding/removing Swift files in the Xcode project:** Use the `/xcode-files` skill (requires Xcode running with the project open). Never create a new source directory on disk before registering it — the MCP tools can't adopt unregistered folders and will create a `"<Name> 2"` duplicate.
 
-## CI
-
-- **iOS:** runs on PRs (`ios-build.yml`) — uses `macos-26` + Xcode 26.4, requires `xcbeautify` installed.
-- **Android:** manual trigger only (`android-build.yml`) — runs unit tests then full build.
-
-## Development Environment
-
-- **Android**: Android Studio (latest stable), JDK 17, Android SDK 24+.
-- **iOS**: Xcode 26+, macOS 26+, minimum deployment target iOS 26.
-- **General**: Git, and optionally tools like xcbeautify for iOS CI.
-
 ## General Rules
 
 - Always verify that every file you create or edit imports the appropriate modules (e.g. `Foundation`, `SwiftUI`, `SwiftData`).
