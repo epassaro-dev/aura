@@ -91,7 +91,7 @@ struct MedicineSheet: View {
     MedicineSheet(mode: .create)
 }
 
-#Preview("Edit", traits: .modifier(MedicationPreviewData())) {
+#Preview("Edit", traits: .modifier(MedicinePreviewData())) {
     QueryPreview { (medicine: Medicine) in
         MedicineSheet(mode: .edit(medicine))
     }

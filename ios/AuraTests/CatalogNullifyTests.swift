@@ -56,19 +56,4 @@ final class CatalogNullifyTests: XCTestCase {
         XCTAssertEqual(entries.count, 1, "TriggerEntry should survive deletion of its type")
         XCTAssertNil(entries.first?.triggerType)
     }
-
-    func testDeletingMedicineNullifiesMedicineLog() throws {
-        let medicine = Medicine(name: "Ibuprofen", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "400", unit: .mg))
-        let log = MedicineLog(date: .now, timestamp: .now, medicine: medicine)
-        context.insert(medicine)
-        context.insert(log)
-        try context.save()
-
-        context.delete(medicine)
-        try context.save()
-
-        let logs = try context.fetch(FetchDescriptor<MedicineLog>())
-        XCTAssertEqual(logs.count, 1, "MedicineLog should survive deletion of its medicine")
-        XCTAssertNil(logs.first?.medicine)
-    }
 }

@@ -4,10 +4,10 @@ import SwiftData
 @Model final class MedicineLog {
     var date: Date
     var timestamp: Date
-    var medicine: Medicine?
+    var medicine: Medicine
     var dosage: Dosage?  // nil means use medicine.defaultDosage
 
-    init(date: Date, timestamp: Date, medicine: Medicine? = nil, dosage: Dosage? = nil) {
+    init(date: Date, timestamp: Date, medicine: Medicine, dosage: Dosage? = nil) {
         self.date = date
         self.timestamp = timestamp
         self.medicine = medicine

@@ -19,7 +19,7 @@ final class DataSeederTests: XCTestCase {
     }
 
     func testSeedingDoesNotRunIfMedicinesAlreadyExist() throws {
-        context.insert(Medicine(name: "someMedicineName", sfSymbol: "some.symbol"))
+        context.insert(Medicine(name: "someMedicineName"))
         try context.save()
         let medicines = try context.fetch(FetchDescriptor<Medicine>())
         XCTAssertEqual(medicines.count, 1, "Seeding should not run if context already contains medicines.")

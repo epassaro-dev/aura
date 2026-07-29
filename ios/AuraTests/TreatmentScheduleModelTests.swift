@@ -13,23 +13,31 @@ final class TreatmentScheduleModelTests: XCTestCase {
     }
 
     func testDefaultValues() {
-        let schedule = TreatmentSchedule()
+        let medicine = Medicine(name: "Propranolol")
+        let schedule = TreatmentSchedule(medicine: medicine)
         XCTAssertEqual(schedule.timesPerDay, 1)
+        XCTAssertNil(schedule.endDate)
         XCTAssertTrue(schedule.isActive)
-        XCTAssertNil(schedule.medicine)
     }
 
-    func testDeletingMedicineCascadesToSchedule() throws {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill")
+    func testStopScheduleIsActiveReturnsFalse() {
+        let medicine = Medicine(name: "Propranolol")
+        let schedule = TreatmentSchedule(medicine: medicine)
+        XCTAssertTrue(schedule.isActive)
+
+        schedule.stop()
+        XCTAssertNotNil(schedule.endDate)
+        XCTAssertFalse(schedule.isActive)
+    }
+
+    func testDeletingMedicineWithTreatmentScheduleIsDenied() throws {
+        let medicine = Medicine(name: "Propranolol")
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
         context.insert(medicine)
         context.insert(schedule)
         try context.save()
 
         context.delete(medicine)
-        try context.save()
-
-        let schedules = try context.fetch(FetchDescriptor<TreatmentSchedule>())
-        XCTAssertTrue(schedules.isEmpty, "TreatmentSchedule should be deleted when its medicine is deleted")
+        XCTAssertThrowsError(try context.save(), "Cannot delete a medicine that has a treatment schedule")
     }
 }

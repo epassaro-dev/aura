@@ -9,8 +9,4 @@ struct Dosage: Codable, Hashable, Equatable {
     func asString() -> String {
         return "\(amount) \(unit.rawValue)"
     }
-
-    static func == (lhs: Dosage, rhs: Dosage) -> Bool {
-        return lhs.amount == rhs.amount && lhs.unit == rhs.unit
-    }
 }

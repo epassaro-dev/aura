@@ -9,8 +9,9 @@ final class CatalogDefaultValueTests: XCTestCase {
     }
 
     func testMedicineDefaultValues() {
-        let medicine = Medicine(name: "Aspirin", sfSymbol: "pills")
+        let medicine = Medicine(name: "Aspirin")
         XCTAssertFalse(medicine.isArchived)
+        XCTAssertEqual(medicine.sfSymbol, "pills.fill")
         XCTAssertNil(medicine.defaultDosage)
     }
 

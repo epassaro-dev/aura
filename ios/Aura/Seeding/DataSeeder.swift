@@ -26,7 +26,6 @@ enum DataSeeder {
         for entry in defaults {
             context.insert(Medicine(
                 name: entry.name,
-                sfSymbol: "pills.fill",
                 defaultDosage: entry.dosage
             ))
         }

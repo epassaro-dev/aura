@@ -4,10 +4,17 @@ import OSLog
 
 struct MedicationSectionView: View {
     @Environment(\.modelContext) private var context
-    @Query(filter: #Predicate<TreatmentSchedule> { $0.isActive == true })
+
+    @Query(filter: #Predicate<TreatmentSchedule> { $0.endDate == nil })
     private var schedules: [TreatmentSchedule]
     @Query private var todayLogs: [MedicineLog]
+
     @State private var showCatalog = false
+    @State private var editingSchedule: TreatmentSchedule?
+
+    private var progress: MedicationProgress {
+        MedicationProgress(schedules: schedules, logs: todayLogs)
+    }
 
     init(day: Date, nextDay: Date) {
         _todayLogs = Query(filter: #Predicate<MedicineLog> { log in
@@ -15,22 +22,17 @@ struct MedicationSectionView: View {
         })
     }
 
-    private var progress: MedicationProgress {
-        MedicationProgress(schedules: schedules, logs: todayLogs)
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Medications")
                 .font(.headline)
-            let displaySchedules = progress.displaySchedules
-            if displaySchedules.isEmpty {
+            if schedules.isEmpty {
                 Button("Set up treatment plan") {
                     showCatalog = true
                 }
                 .buttonStyle(.borderedProminent)
             } else {
-                ForEach(displaySchedules) { schedule in
+                ForEach(schedules) { schedule in
                     scheduleRow(schedule: schedule)
                 }
             }
@@ -38,17 +40,21 @@ struct MedicationSectionView: View {
         .sheet(isPresented: $showCatalog) {
             MedicineCatalogSheet()
         }
+        .sheet(item: $editingSchedule) { schedule in
+            TreatmentScheduleSheet(mode: .edit(schedule)) { }
+        }
     }
 
     @ViewBuilder
     private func scheduleRow(schedule: TreatmentSchedule) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: schedule.medicine?.sfSymbol ?? "pills.fill")
+            Image(systemName: schedule.medicine.sfSymbol)
                 .font(.title2)
                 .foregroundStyle(.tint)
                 .frame(width: 32)
             VStack(alignment: .leading, spacing: 2) {
-                Text(schedule.medicine?.name ?? "Unknown")
+                let dosageString = schedule.dosage?.asString() ?? schedule.medicine.defaultDosage?.asString() ?? ""
+                Text("\(schedule.medicine.name) \(dosageString)")
                     .font(.subheadline)
                     .fontWeight(.medium)
                 Text("\(progress.takenCount(for: schedule)) of \(schedule.timesPerDay) taken today")
@@ -68,6 +74,18 @@ struct MedicationSectionView: View {
             }
         }
         .padding(.vertical, 4)
+        .contextMenu {
+            Button {
+                editingSchedule = schedule
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            Button(role: .destructive) {
+                stopTreatment(schedule)
+            } label: {
+                Label("Stop treatment", systemImage: "trash")
+            }
+        }
     }
 
     private func recordDose(for schedule: TreatmentSchedule) {
@@ -79,23 +97,33 @@ struct MedicationSectionView: View {
             Logger.persistence.error("Failed to record dose: \(String(describing: error), privacy: .public)")
         }
     }
+
+    private func stopTreatment(_ schedule: TreatmentSchedule) {
+        schedule.stop()
+        do {
+            try context.save()
+        } catch {
+            Logger.persistence.error("Failed to stop treatment: \(String(describing: error), privacy: .public)")
+            context.rollback()
+        }
+    }
 }
 
-#Preview("Empty state", traits: .modifier(EmptyPreviewData())) {
+#Preview("Empty state", traits: .modifier(MedicinePreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     MedicationSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("Partially taken", traits: .modifier(MedicationPreviewData())) {
+#Preview("Partially taken", traits: .modifier(TreatmentSchedulePreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     MedicationSectionView(day: today, nextDay: tomorrow)
         .padding()
 }
 
-#Preview("All doses taken", traits: .modifier(CompletedMedicationPreviewData())) {
+#Preview("All doses taken", traits: .modifier(CompletedDailyTreatmentPreviewData())) {
     let today = Calendar.current.startOfDay(for: .now)
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     MedicationSectionView(day: today, nextDay: tomorrow)

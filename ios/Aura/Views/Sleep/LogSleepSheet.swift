@@ -125,6 +125,7 @@ struct LogSleepSheet: View {
             )
             context.insert(entry)
         case .edit(let entry):
+            entry.date = SleepDay.dayAnchor(forSleepEnding: endTime)
             entry.startTime = startTime
             entry.endTime = endTime
             entry.quality = quality

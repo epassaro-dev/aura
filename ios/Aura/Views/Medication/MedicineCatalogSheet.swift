@@ -5,8 +5,10 @@ import OSLog
 struct MedicineCatalogSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
+
     @Query(filter: #Predicate<Medicine> { $0.isArchived == false }, sort: \Medicine.name)
     private var medicines: [Medicine]
+
     @State private var showAddMedicine = false
     @State private var editingEntry: Medicine?
     @State private var selectedMedicine: Medicine?
@@ -60,7 +62,7 @@ struct MedicineCatalogSheet: View {
                 MedicineSheet(mode: .edit(medicine))
             }
             .sheet(item: $selectedMedicine) { medicine in
-                TreatmentScheduleSheet(medicine: medicine) {
+                TreatmentScheduleSheet(mode: .create(medicine)) {
                     dismiss()
                 }
             }
@@ -81,6 +83,6 @@ struct MedicineCatalogSheet: View {
     MedicineCatalogSheet()
 }
 
-#Preview("With medicines", traits: .modifier(MedicationPreviewData())) {
+#Preview("With medicines", traits: .modifier(MedicinePreviewData())) {
     MedicineCatalogSheet()
 }

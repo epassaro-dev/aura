@@ -35,11 +35,12 @@ struct DosageSectionView: View {
     }
 
     private func updateDosage() {
-        if amount.isEmpty {
+        let trimmedAmount = amount.trimmingCharacters(in: .whitespaces)
+        if trimmedAmount.isEmpty {
             _dosage.wrappedValue = nil
             return
         }
-        _dosage.wrappedValue = Dosage(amount: amount.trimmingCharacters(in: .whitespaces), unit: unit)
+        _dosage.wrappedValue = Dosage(amount: trimmedAmount, unit: unit)
     }
 }
 

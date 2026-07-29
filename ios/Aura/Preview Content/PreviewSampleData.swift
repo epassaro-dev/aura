@@ -50,13 +50,23 @@ struct FullSleepPreviewData: SampleDataPreviewModifier {
     }
 }
 
+/// Three catalog medicines.
+struct MedicinePreviewData: SampleDataPreviewModifier {
+    static func seed(context: ModelContext) {
+        let propranolol = Medicine(name: "Propranolol", defaultDosage: Dosage(amount: "40", unit: .mg))
+        let topiramate = Medicine(name: "Topiramate", defaultDosage: Dosage(amount: "25", unit: .mg))
+        let amitriptyline = Medicine(name: "Amitriptyline")
+        [propranolol, topiramate, amitriptyline].forEach { context.insert($0) }
+    }
+}
+
 /// Three catalog medicines; Propranolol has an active 2×/day schedule with
 /// one dose already taken today.
-struct MedicationPreviewData: SampleDataPreviewModifier {
+struct TreatmentSchedulePreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
-        let propranolol = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "40", unit: .mg))
-        let topiramate = Medicine(name: "Topiramate", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "25", unit: .mg))
-        let amitriptyline = Medicine(name: "Amitriptyline", sfSymbol: "pills.fill")
+        let propranolol = Medicine(name: "Propranolol", defaultDosage: Dosage(amount: "40", unit: .mg))
+        let topiramate = Medicine(name: "Topiramate", defaultDosage: Dosage(amount: "25", unit: .mg))
+        let amitriptyline = Medicine(name: "Amitriptyline")
         [propranolol, topiramate, amitriptyline].forEach { context.insert($0) }
         context.insert(TreatmentSchedule(medicine: propranolol, timesPerDay: 2))
         let today = Calendar.current.startOfDay(for: .now)
@@ -65,9 +75,9 @@ struct MedicationPreviewData: SampleDataPreviewModifier {
 }
 
 /// A single 1×/day schedule with its dose already taken today.
-struct CompletedMedicationPreviewData: SampleDataPreviewModifier {
+struct CompletedDailyTreatmentPreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: Dosage(amount: "40", unit: .mg))
+        let medicine = Medicine(name: "Propranolol", defaultDosage: Dosage(amount: "40", unit: .mg))
         context.insert(medicine)
         context.insert(TreatmentSchedule(medicine: medicine, timesPerDay: 1))
         let today = Calendar.current.startOfDay(for: .now)
