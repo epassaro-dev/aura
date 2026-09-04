@@ -45,7 +45,7 @@ final class HeadacheCascadeDeleteTests: XCTestCase {
     func testDeletingHeadacheDeletesMedicineLogs() throws {
         let medicine = Medicine(name: "Acetaminophen")
         let headache = HeadacheEntry(startTime: .now, headacheType: .migraine)
-        let medicineLog = HeadacheMedicineLog(medicine: medicine, timestamp: .now)
+        let medicineLog = HeadacheMedicineLog(timestamp: .now, medicine: medicine)
         context.insert(headache)
         context.insert(medicineLog)
         headache.medications.append(medicineLog)
