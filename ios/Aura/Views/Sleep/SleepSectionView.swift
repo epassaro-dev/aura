@@ -7,6 +7,7 @@ struct SleepSectionView: View {
     @Query private var entries: [SleepEntry]
     @State private var showAddNight = false
     @State private var showAddNap = false
+    @State private var editingEntry: SleepEntry?
 
     init(day: Date, nextDay: Date) {
         _entries = Query(filter: #Predicate<SleepEntry> { entry in
@@ -42,10 +43,13 @@ struct SleepSectionView: View {
             .buttonStyle(.bordered)
         }
         .sheet(isPresented: $showAddNight) {
-            AddSleepSheet(type: .night)
+            LogSleepSheet(mode: .create(.night))
         }
         .sheet(isPresented: $showAddNap) {
-            AddSleepSheet(type: .nap)
+            LogSleepSheet(mode: .create(.nap))
+        }
+        .sheet(item: $editingEntry) { entry in
+            LogSleepSheet(mode: .edit(entry))
         }
     }
 
@@ -68,6 +72,11 @@ struct SleepSectionView: View {
         }
         .padding(.vertical, 4)
         .contextMenu {
+            Button {
+                editingEntry = entry
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
             Button(role: .destructive) {
                 delete(entry)
             } label: {

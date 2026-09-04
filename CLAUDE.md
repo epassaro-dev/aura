@@ -54,7 +54,8 @@ xcodebuild \
 
 **SwiftData model architecture:**
 
-- `Models/Catalog/` — user-extensible reference types (`FeelingType`, `TriggerType`, `SymptomType`, `Medicine`, `FoodItem`, `ActivityType`, `TellingSignType`, `ReliefMethodType`). All carry `isDefault` (locks renaming, enables restore) and `isArchived` (soft delete).
+- `Models/Catalog/` — user-extensible reference types. All carry `isArchived` (soft delete — hides from active queries, preserves history on existing logs). Most carry `isDefault` (marks pre-seeded entries). `Medicine` dropped `isDefault`.
+- editing/deleting pre-seeded medicines is unrestricted, and seeding is idempotent by checking the table is empty rather than matching by name/flag; the types that still use `isDefault` should follow suit once they get real UI.
 - `Models/Log/` — independent daily log entries, each with a `date: Date` anchor (`SleepEntry`, `FeelingEntry`, `MedicineLog`, `ActivityEntry`, `MealEntry`, `TriggerEntry`, `SymptomEntry`).
 - `Models/Headache/` — `HeadacheEntry` with cascading child logs: `HeadachePainLog` (intensity 1–10 + affected areas, tracks fluctuations over time), `HeadacheSymptomLog`, `HeadacheMedicineLog` (+ `efficacy`), `HeadacheReliefLog` (+ `efficacy`).
 
@@ -77,6 +78,9 @@ struct MySection: View {
 - `ContentView` owns the day anchor (`today`/`tomorrow`) and refreshes it on `NSCalendarDayChanged` and when the scene becomes active; child views re-init and their queries follow.
 - Domain logic lives in pure types in `Aura/Domain/` (`SleepDay`, `MedicationProgress`, `TreatmentPlanner`) — no `ModelContext`, unit-tested directly. `Aura/Support/` is for app-wide utilities only (`Logger+Aura`).
 - Writes: views own every context write (insert + `do/catch` save via `@Environment(\.modelContext)`). Domain types build or mutate models but never touch the context.
+- Sheets that create/edit a model own their full write (insert/mutate + save) directly; no write-delegation closures. Use a `mode: .create/.edit(Model)` enum to drive both paths in one sheet (see `LogSleepSheet`, `MedicineSheet`).
+- Views validate/gate input (e.g. disable Save until valid); domain factory functions assume valid input rather than re-validating.
+- Deleting a catalog entry that may have existing logs must archive (soft-delete via the model's `archive()`), never hard-delete via `context.delete` — relationships using `.nullify` would otherwise silently sever historical log references.
 - Persistence errors: never `try?` — use `do/catch` and log via `Logger.persistence` / `Logger.seeding` (`Support/Logger+Aura.swift`).
 
 **Previews for SwiftData views:** Attach a shared sample-data scenario from `Aura/Preview Content/PreviewSampleData.swift`; add new scenarios there as `SampleDataPreviewModifier` conformances (no `try!` — the preview system reports container failures in the canvas). `QueryPreview { (model: MyModel) in ... }` bridges scenarios to views that take a model instance.
@@ -88,17 +92,6 @@ struct MySection: View {
 ```
 
 **Adding/removing Swift files in the Xcode project:** Use the `/xcode-files` skill (requires Xcode running with the project open). Never create a new source directory on disk before registering it — the MCP tools can't adopt unregistered folders and will create a `"<Name> 2"` duplicate.
-
-## CI
-
-- **iOS:** runs on PRs (`ios-build.yml`) — uses `macos-26` + Xcode 26.4, requires `xcbeautify` installed.
-- **Android:** manual trigger only (`android-build.yml`) — runs unit tests then full build.
-
-## Development Environment
-
-- **Android**: Android Studio (latest stable), JDK 17, Android SDK 24+.
-- **iOS**: Xcode 26+, macOS 26+, minimum deployment target iOS 26.
-- **General**: Git, and optionally tools like xcbeautify for iOS CI.
 
 ## General Rules
 

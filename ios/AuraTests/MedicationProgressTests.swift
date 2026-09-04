@@ -20,8 +20,8 @@ final class MedicationProgressTests: XCTestCase {
     // MARK: - takenCount
 
     func testTakenCountCountsOnlyMatchingMedicine() throws {
-        let aspirin = Medicine(name: "Aspirin", sfSymbol: "pills.fill")
-        let ibuprofen = Medicine(name: "Ibuprofen", sfSymbol: "pills.fill")
+        let aspirin = Medicine(name: "Aspirin")
+        let ibuprofen = Medicine(name: "Ibuprofen")
         let schedule = TreatmentSchedule(medicine: aspirin, timesPerDay: 2)
         context.insert(aspirin)
         context.insert(ibuprofen)
@@ -34,20 +34,10 @@ final class MedicationProgressTests: XCTestCase {
         XCTAssertEqual(progress.takenCount(for: schedule), 1)
     }
 
-    func testTakenCountIsZeroWithoutMedicine() throws {
-        let schedule = TreatmentSchedule(medicine: nil, timesPerDay: 1)
-        context.insert(schedule)
-        try context.save()
-
-        let progress = MedicationProgress(schedules: [schedule], logs: [])
-        XCTAssertEqual(progress.takenCount(for: schedule), 0)
-        XCTAssertFalse(progress.isCompleted(for: schedule))
-    }
-
     // MARK: - isCompleted
 
     func testIsCompletedOnlyWhenAllDosesTaken() throws {
-        let medicine = Medicine(name: "Aspirin", sfSymbol: "pills.fill")
+        let medicine = Medicine(name: "Aspirin")
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
         context.insert(schedule)
@@ -63,31 +53,5 @@ final class MedicationProgressTests: XCTestCase {
 
         let progress = MedicationProgress(schedules: [schedule], logs: [firstDose, secondDose])
         XCTAssertTrue(progress.isCompleted(for: schedule))
-    }
-
-    // MARK: - displaySchedules
-
-    func testDisplaySchedulesExcludesNilMedicine() throws {
-        let medicine = Medicine(name: "Aspirin", sfSymbol: "pills.fill")
-        let valid = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
-        let orphan = TreatmentSchedule(medicine: nil, timesPerDay: 1)
-        context.insert(medicine)
-        context.insert(valid)
-        context.insert(orphan)
-        try context.save()
-
-        let progress = MedicationProgress(schedules: [valid, orphan], logs: [])
-        XCTAssertEqual(progress.displaySchedules.count, 1)
-    }
-
-    func testDisplaySchedulesExcludesArchivedMedicine() throws {
-        let archived = Medicine(name: "OldMed", sfSymbol: "pills.fill", isArchived: true)
-        let schedule = TreatmentSchedule(medicine: archived, timesPerDay: 1)
-        context.insert(archived)
-        context.insert(schedule)
-        try context.save()
-
-        let progress = MedicationProgress(schedules: [schedule], logs: [])
-        XCTAssertTrue(progress.displaySchedules.isEmpty)
     }
 }

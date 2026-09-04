@@ -3,23 +3,21 @@ import SwiftData
 @Model final class Medicine {
     var name: String
     var sfSymbol: String
-    var isDefault: Bool
     var isArchived: Bool
-    var defaultDosage: String?
+    var defaultDosage: Dosage?
 
-    @Relationship(deleteRule: .nullify, inverse: \MedicineLog.medicine)
+    @Relationship(deleteRule: .deny, inverse: \MedicineLog.medicine)
     var medicineLogs: [MedicineLog] = []
 
-    @Relationship(deleteRule: .nullify, inverse: \HeadacheMedicineLog.medicine)
+    @Relationship(deleteRule: .deny, inverse: \HeadacheMedicineLog.medicine)
     var headacheMedicineLogs: [HeadacheMedicineLog] = []
 
-    @Relationship(deleteRule: .cascade, inverse: \TreatmentSchedule.medicine)
+    @Relationship(deleteRule: .deny, inverse: \TreatmentSchedule.medicine)
     var schedules: [TreatmentSchedule] = []
 
-    init(name: String, sfSymbol: String, isDefault: Bool = false, isArchived: Bool = false, defaultDosage: String? = nil) {
+    init(name: String, sfSymbol: String = "pills.fill", isArchived: Bool = false, defaultDosage: Dosage? = nil) {
         self.name = name
         self.sfSymbol = sfSymbol
-        self.isDefault = isDefault
         self.isArchived = isArchived
         self.defaultDosage = defaultDosage
     }
@@ -31,7 +29,7 @@ extension Medicine {
     func archive() {
         isArchived = true
         for schedule in schedules where schedule.isActive {
-            schedule.isActive = false
+            schedule.stop()
         }
     }
 }

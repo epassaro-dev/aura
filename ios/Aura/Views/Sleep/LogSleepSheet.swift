@@ -2,7 +2,13 @@ import SwiftUI
 import SwiftData
 import OSLog
 
-struct AddSleepSheet: View {
+enum LogSleepSheetMode {
+    case create(SleepType)
+    case edit(SleepEntry)
+}
+
+struct LogSleepSheet: View {
+    private let mode: LogSleepSheetMode
     private let type: SleepType
 
     @Environment(\.modelContext) private var context
@@ -12,22 +18,32 @@ struct AddSleepSheet: View {
     @State private var quality: Int = 3
     @State private var showSaveError = false
 
-    init(type: SleepType) {
-        self.type = type
+    init(mode: LogSleepSheetMode) {
+        self.mode = mode
         let now = Date.now
         let calendar = Calendar.current
-        if type == .night {
-            let yesterday = calendar.date(byAdding: .day, value: -1, to: now) ?? now
-            var startComponents = calendar.dateComponents([.year, .month, .day], from: yesterday)
-            startComponents.hour = 23
-            startComponents.minute = 0
-            let startDate = calendar.date(from: startComponents) ?? yesterday
-            let endDate = calendar.date(byAdding: .hour, value: 8, to: startDate) ?? now
-            _startTime = State(wrappedValue: startDate)
-            _endTime = State(wrappedValue: endDate)
-        } else {
-            _startTime = State(wrappedValue: calendar.date(byAdding: .hour, value: -1, to: now) ?? now)
-            _endTime = State(wrappedValue: now)
+
+        switch mode {
+        case .create(let type):
+            self.type = type
+            if type == .night {
+                let yesterday = calendar.date(byAdding: .day, value: -1, to: now) ?? now
+                var startComponents = calendar.dateComponents([.year, .month, .day], from: yesterday)
+                startComponents.hour = 23
+                startComponents.minute = 0
+                let startDate = calendar.date(from: startComponents) ?? yesterday
+                let endDate = calendar.date(byAdding: .hour, value: 8, to: startDate) ?? now
+                _startTime = State(wrappedValue: startDate)
+                _endTime = State(wrappedValue: endDate)
+            } else {
+                _startTime = State(wrappedValue: calendar.date(byAdding: .hour, value: -1, to: now) ?? now)
+                _endTime = State(wrappedValue: now)
+            }
+        case .edit(let entry):
+            self.type = entry.type
+            _startTime = State(wrappedValue: entry.startTime)
+            _endTime = State(wrappedValue: entry.endTime)
+            _quality = State(wrappedValue: entry.quality)
         }
     }
 
@@ -82,10 +98,10 @@ struct AddSleepSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel", role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
+                    Button("Save", role: .confirm) { save() }
                         .disabled(endTime <= startTime)
                 }
             }
@@ -98,14 +114,23 @@ struct AddSleepSheet: View {
     }
 
     private func save() {
-        let entry = SleepEntry(
-            date: SleepDay.dayAnchor(forSleepEnding: endTime),
-            type: type,
-            startTime: startTime,
-            endTime: endTime,
-            quality: quality
-        )
-        context.insert(entry)
+        switch mode {
+        case .create:
+            let entry = SleepEntry(
+                date: SleepDay.dayAnchor(forSleepEnding: endTime),
+                type: type,
+                startTime: startTime,
+                endTime: endTime,
+                quality: quality
+            )
+            context.insert(entry)
+        case .edit(let entry):
+            entry.date = SleepDay.dayAnchor(forSleepEnding: endTime)
+            entry.startTime = startTime
+            entry.endTime = endTime
+            entry.quality = quality
+        }
+
         do {
             try context.save()
             // TODO: show a confirmation toast naming the anchored day (e.g. "Night sleep logged for Jul 10"),
@@ -114,16 +139,22 @@ struct AddSleepSheet: View {
         } catch {
             Logger.persistence.error("Failed to save sleep entry: \(String(describing: error), privacy: .public)")
             // Remove the pending insert so autosave can't persist or retry it behind the user's back.
-            context.delete(entry)
+            context.rollback()
             showSaveError = true
         }
     }
 }
 
 #Preview("Night sleep", traits: .modifier(EmptyPreviewData())) {
-    AddSleepSheet(type: .night)
+    LogSleepSheet(mode: .create(.night))
 }
 
 #Preview("Nap", traits: .modifier(EmptyPreviewData())) {
-    AddSleepSheet(type: .nap)
+    LogSleepSheet(mode: .create(.nap))
+}
+
+#Preview("Edit night sleep", traits: .modifier(NightSleepPreviewData())) {
+    QueryPreview { (entry: SleepEntry) in
+        LogSleepSheet(mode: .edit(entry))
+    }
 }

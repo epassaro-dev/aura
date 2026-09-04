@@ -7,11 +7,11 @@ enum TreatmentPlanner {
     /// Enforces "one active schedule per medicine": deactivates the existing
     /// active schedules in place and returns the replacement for the caller
     /// to insert.
-    static func replaceSchedule(for medicine: Medicine, timesPerDay: Int) -> TreatmentSchedule {
+    static func replaceSchedule(for medicine: Medicine, dosage: Dosage?, timesPerDay: Int) -> TreatmentSchedule {
         for schedule in medicine.schedules where schedule.isActive {
-            schedule.isActive = false
+            schedule.stop()
         }
-        return TreatmentSchedule(medicine: medicine, timesPerDay: timesPerDay)
+        return TreatmentSchedule(medicine: medicine, dosage: dosage, timesPerDay: timesPerDay)
     }
 
     /// Builds one dose log taken now, anchored to today, or nil once the
@@ -22,21 +22,13 @@ enum TreatmentPlanner {
         now: Date = .now,
         calendar: Calendar = .current
     ) -> MedicineLog? {
-        guard let medicine = schedule.medicine, !progress.isCompleted(for: schedule) else { return nil }
+        let medicine = schedule.medicine
+        guard !progress.isCompleted(for: schedule) else { return nil }
         return MedicineLog(
             date: calendar.startOfDay(for: now),
             timestamp: now,
             medicine: medicine,
-            dosage: medicine.defaultDosage
+            dosage: schedule.dosage ?? medicine.defaultDosage
         )
-    }
-
-    /// Builds a custom medicine, or nil for a blank name. Blank dosages become nil.
-    static func makeMedicine(name: String, defaultDosage: String?) -> Medicine? {
-        let trimmedName = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return nil }
-        let trimmedDosage = defaultDosage?.trimmingCharacters(in: .whitespaces)
-        let finalDosage = (trimmedDosage?.isEmpty == false) ? trimmedDosage : nil
-        return Medicine(name: trimmedName, sfSymbol: "pills.fill", defaultDosage: finalDosage)
     }
 }

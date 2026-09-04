@@ -23,11 +23,12 @@ final class TreatmentPlannerTests: XCTestCase {
     // MARK: - replaceSchedule
 
     func testReplaceScheduleBuildsActiveSchedule() throws {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill")
+        let medicine = Medicine(name: "Propranolol")
         context.insert(medicine)
         try context.save()
 
-        let schedule = TreatmentPlanner.replaceSchedule(for: medicine, timesPerDay: 2)
+        let treatmentDosage = Dosage(amount: "40", unit: .mg)
+        let schedule = TreatmentPlanner.replaceSchedule(for: medicine, dosage: treatmentDosage, timesPerDay: 2)
         context.insert(schedule)
         try context.save()
 
@@ -35,17 +36,20 @@ final class TreatmentPlannerTests: XCTestCase {
         XCTAssertEqual(schedules.count, 1)
         XCTAssertEqual(schedules.first?.timesPerDay, 2)
         XCTAssertTrue(schedules.first?.isActive == true)
-        XCTAssertEqual(schedules.first?.medicine?.name, "Propranolol")
+        XCTAssertEqual(schedules.first?.medicine.name, "Propranolol")
+        XCTAssertEqual(schedules.first?.dosage, treatmentDosage)
     }
 
     func testReplaceScheduleDeactivatesPreviousScheduleInPlace() throws {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill")
-        let existing = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
+        let medicine = Medicine(name: "Propranolol")
+        let existingDosage = Dosage(amount: "40", unit: .mg)
+        let existing = TreatmentSchedule(medicine: medicine, dosage: existingDosage, timesPerDay: 1)
         context.insert(medicine)
         context.insert(existing)
         try context.save()
 
-        let replacement = TreatmentPlanner.replaceSchedule(for: medicine, timesPerDay: 3)
+        let replacementDosage = Dosage(amount: "80", unit: .mg)
+        let replacement = TreatmentPlanner.replaceSchedule(for: medicine, dosage: replacementDosage, timesPerDay: 3)
         context.insert(replacement)
         try context.save()
 
@@ -55,6 +59,7 @@ final class TreatmentPlannerTests: XCTestCase {
         let active = schedules.filter { $0.isActive }
         XCTAssertEqual(active.count, 1)
         XCTAssertEqual(active.first?.timesPerDay, 3)
+        XCTAssertEqual(active.first?.dosage, replacementDosage)
     }
 
     // MARK: - doseLog
@@ -63,8 +68,9 @@ final class TreatmentPlannerTests: XCTestCase {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Rome")!
         let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 9, hour: 8, minute: 30))!
+        let dosage = Dosage(amount: "40", unit: .mg)
 
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill", defaultDosage: "40 mg")
+        let medicine = Medicine(name: "Propranolol", defaultDosage: dosage)
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
         context.insert(schedule)
@@ -79,11 +85,11 @@ final class TreatmentPlannerTests: XCTestCase {
 
         XCTAssertEqual(log.date, calendar.startOfDay(for: now))
         XCTAssertEqual(log.timestamp, now)
-        XCTAssertEqual(log.dosage, "40 mg")
+        XCTAssertEqual(log.dosage, dosage)
     }
 
     func testDoseLogIsNilOnceCompleted() throws {
-        let medicine = Medicine(name: "Aspirin", sfSymbol: "pills.fill")
+        let medicine = Medicine(name: "Aspirin")
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
         context.insert(medicine)
         context.insert(schedule)
@@ -97,37 +103,10 @@ final class TreatmentPlannerTests: XCTestCase {
         XCTAssertEqual(try fetchLogs().count, 1)
     }
 
-    func testDoseLogIsNilWithoutMedicine() throws {
-        let schedule = TreatmentSchedule(medicine: nil, timesPerDay: 1)
-        context.insert(schedule)
-        try context.save()
-
-        XCTAssertNil(TreatmentPlanner.doseLog(for: schedule, progress: try progress(for: schedule)))
-    }
-
-    // MARK: - makeMedicine
-
-    func testMakeMedicineTrimsNameAndKeepsDosage() {
-        let medicine = TreatmentPlanner.makeMedicine(name: "  Metoprolol ", defaultDosage: "50mg")
-        XCTAssertEqual(medicine?.name, "Metoprolol")
-        XCTAssertEqual(medicine?.sfSymbol, "pills.fill")
-        XCTAssertEqual(medicine?.defaultDosage, "50mg")
-    }
-
-    func testMakeMedicineWithBlankNameIsNil() {
-        XCTAssertNil(TreatmentPlanner.makeMedicine(name: "   ", defaultDosage: nil))
-    }
-
-    func testMakeMedicineWithBlankDosageStoresNil() {
-        let medicine = TreatmentPlanner.makeMedicine(name: "Aspirin", defaultDosage: "  ")
-        XCTAssertNotNil(medicine)
-        XCTAssertNil(medicine?.defaultDosage)
-    }
-
     // MARK: - Medicine.archive
 
     func testArchiveDeactivatesActiveSchedules() throws {
-        let medicine = Medicine(name: "Propranolol", sfSymbol: "pills.fill")
+        let medicine = Medicine(name: "Propranolol")
         let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
         context.insert(schedule)
