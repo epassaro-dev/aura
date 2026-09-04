@@ -1,34 +1,34 @@
 import Foundation
 
-/// Domain rules for treatment schedules, dose logging, and the medicine
+/// Domain rules for treatment plans, dose logging, and the medicine
 /// catalog. Builds or mutates models only — every ModelContext write
 /// (insert/save) belongs to the caller.
 enum TreatmentPlanner {
-    /// Enforces "one active schedule per medicine": deactivates the existing
-    /// active schedules in place and returns the replacement for the caller
+    /// Enforces "one active plan per medicine": deactivates the existing
+    /// active plans in place and returns the replacement for the caller
     /// to insert.
-    static func replaceSchedule(for medicine: Medicine, dosage: Dosage?, timesPerDay: Int) -> TreatmentSchedule {
-        for schedule in medicine.schedules where schedule.isActive {
-            schedule.stop()
+    static func replacePlan(for medicine: Medicine, dosage: Dosage?, timesPerDay: Int) -> TreatmentPlan {
+        for plan in medicine.plans where plan.isActive {
+            plan.stop()
         }
-        return TreatmentSchedule(medicine: medicine, dosage: dosage, timesPerDay: timesPerDay)
+        return TreatmentPlan(medicine: medicine, dosage: dosage, timesPerDay: timesPerDay)
     }
 
     /// Builds one dose log taken now, anchored to today, or nil once the
-    /// schedule is completed.
+    /// plan is completed.
     static func doseLog(
-        for schedule: TreatmentSchedule,
+        for plan: TreatmentPlan,
         progress: MedicationProgress,
         now: Date = .now,
         calendar: Calendar = .current
     ) -> MedicineLog? {
-        let medicine = schedule.medicine
-        guard !progress.isCompleted(for: schedule) else { return nil }
+        let medicine = plan.medicine
+        guard !progress.isCompleted(for: plan) else { return nil }
         return MedicineLog(
             date: calendar.startOfDay(for: now),
             timestamp: now,
             medicine: medicine,
-            dosage: schedule.dosage ?? medicine.defaultDosage
+            dosage: plan.dosage ?? medicine.defaultDosage
         )
     }
 }

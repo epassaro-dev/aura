@@ -25,7 +25,7 @@ enum AuraSchemaV1: VersionedSchema {
             HeadacheSymptomLog.self,
             HeadacheMedicineLog.self,
             HeadacheReliefLog.self,
-            TreatmentSchedule.self,
+            TreatmentPlan.self,
         ]
     }
 }

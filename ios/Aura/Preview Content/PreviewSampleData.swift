@@ -60,26 +60,26 @@ struct MedicinePreviewData: SampleDataPreviewModifier {
     }
 }
 
-/// Three catalog medicines; Propranolol has an active 2×/day schedule with
+/// Three catalog medicines; Propranolol has an active 2×/day plan with
 /// one dose already taken today.
-struct TreatmentSchedulePreviewData: SampleDataPreviewModifier {
+struct TreatmentPlanPreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
         let propranolol = Medicine(name: "Propranolol", defaultDosage: Dosage(amount: "40", unit: .mg))
         let topiramate = Medicine(name: "Topiramate", defaultDosage: Dosage(amount: "25", unit: .mg))
         let amitriptyline = Medicine(name: "Amitriptyline")
         [propranolol, topiramate, amitriptyline].forEach { context.insert($0) }
-        context.insert(TreatmentSchedule(medicine: propranolol, timesPerDay: 2))
+        context.insert(TreatmentPlan(medicine: propranolol, timesPerDay: 2))
         let today = Calendar.current.startOfDay(for: .now)
         context.insert(MedicineLog(date: today, timestamp: .now, medicine: propranolol, dosage: Dosage(amount: "40", unit: .mg)))
     }
 }
 
-/// A single 1×/day schedule with its dose already taken today.
+/// A single 1×/day plan with its dose already taken today.
 struct CompletedDailyTreatmentPreviewData: SampleDataPreviewModifier {
     static func seed(context: ModelContext) {
         let medicine = Medicine(name: "Propranolol", defaultDosage: Dosage(amount: "40", unit: .mg))
         context.insert(medicine)
-        context.insert(TreatmentSchedule(medicine: medicine, timesPerDay: 1))
+        context.insert(TreatmentPlan(medicine: medicine, timesPerDay: 1))
         let today = Calendar.current.startOfDay(for: .now)
         context.insert(MedicineLog(date: today, timestamp: .now, medicine: medicine, dosage: Dosage(amount: "40", unit: .mg)))
     }

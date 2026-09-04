@@ -62,7 +62,7 @@ struct MedicineCatalogSheet: View {
                 MedicineSheet(mode: .edit(medicine))
             }
             .sheet(item: $selectedMedicine) { medicine in
-                TreatmentScheduleSheet(mode: .create(medicine)) {
+                TreatmentPlanSheet(mode: .create(medicine)) {
                     dismiss()
                 }
             }

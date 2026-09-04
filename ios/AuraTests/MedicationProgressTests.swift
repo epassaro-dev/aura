@@ -22,36 +22,36 @@ final class MedicationProgressTests: XCTestCase {
     func testTakenCountCountsOnlyMatchingMedicine() throws {
         let aspirin = Medicine(name: "Aspirin")
         let ibuprofen = Medicine(name: "Ibuprofen")
-        let schedule = TreatmentSchedule(medicine: aspirin, timesPerDay: 2)
+        let plan = TreatmentPlan(medicine: aspirin, timesPerDay: 2)
         context.insert(aspirin)
         context.insert(ibuprofen)
-        context.insert(schedule)
+        context.insert(plan)
         let logs = [makeLog(for: aspirin), makeLog(for: ibuprofen)]
         logs.forEach { context.insert($0) }
         try context.save()
 
-        let progress = MedicationProgress(schedules: [schedule], logs: logs)
-        XCTAssertEqual(progress.takenCount(for: schedule), 1)
+        let progress = MedicationProgress(plans: [plan], logs: logs)
+        XCTAssertEqual(progress.takenCount(for: plan), 1)
     }
 
     // MARK: - isCompleted
 
     func testIsCompletedOnlyWhenAllDosesTaken() throws {
         let medicine = Medicine(name: "Aspirin")
-        let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
+        let plan = TreatmentPlan(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
-        context.insert(schedule)
+        context.insert(plan)
         let firstDose = makeLog(for: medicine)
         context.insert(firstDose)
         try context.save()
 
-        XCTAssertFalse(MedicationProgress(schedules: [schedule], logs: [firstDose]).isCompleted(for: schedule))
+        XCTAssertFalse(MedicationProgress(plans: [plan], logs: [firstDose]).isCompleted(for: plan))
 
         let secondDose = makeLog(for: medicine)
         context.insert(secondDose)
         try context.save()
 
-        let progress = MedicationProgress(schedules: [schedule], logs: [firstDose, secondDose])
-        XCTAssertTrue(progress.isCompleted(for: schedule))
+        let progress = MedicationProgress(plans: [plan], logs: [firstDose, secondDose])
+        XCTAssertTrue(progress.isCompleted(for: plan))
     }
 }

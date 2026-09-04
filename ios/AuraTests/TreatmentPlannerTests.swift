@@ -16,47 +16,47 @@ final class TreatmentPlannerTests: XCTestCase {
         try context.fetch(FetchDescriptor<MedicineLog>())
     }
 
-    private func progress(for schedule: TreatmentSchedule) throws -> MedicationProgress {
-        MedicationProgress(schedules: [schedule], logs: try fetchLogs())
+    private func progress(for plan: TreatmentPlan) throws -> MedicationProgress {
+        MedicationProgress(plans: [plan], logs: try fetchLogs())
     }
 
-    // MARK: - replaceSchedule
+    // MARK: - replacePlan
 
-    func testReplaceScheduleBuildsActiveSchedule() throws {
+    func testReplacePlanBuildsActivePlan() throws {
         let medicine = Medicine(name: "Propranolol")
         context.insert(medicine)
         try context.save()
 
         let treatmentDosage = Dosage(amount: "40", unit: .mg)
-        let schedule = TreatmentPlanner.replaceSchedule(for: medicine, dosage: treatmentDosage, timesPerDay: 2)
-        context.insert(schedule)
+        let plan = TreatmentPlanner.replacePlan(for: medicine, dosage: treatmentDosage, timesPerDay: 2)
+        context.insert(plan)
         try context.save()
 
-        let schedules = try context.fetch(FetchDescriptor<TreatmentSchedule>())
-        XCTAssertEqual(schedules.count, 1)
-        XCTAssertEqual(schedules.first?.timesPerDay, 2)
-        XCTAssertTrue(schedules.first?.isActive == true)
-        XCTAssertEqual(schedules.first?.medicine.name, "Propranolol")
-        XCTAssertEqual(schedules.first?.dosage, treatmentDosage)
+        let plans = try context.fetch(FetchDescriptor<TreatmentPlan>())
+        XCTAssertEqual(plans.count, 1)
+        XCTAssertEqual(plans.first?.timesPerDay, 2)
+        XCTAssertTrue(plans.first?.isActive == true)
+        XCTAssertEqual(plans.first?.medicine.name, "Propranolol")
+        XCTAssertEqual(plans.first?.dosage, treatmentDosage)
     }
 
-    func testReplaceScheduleDeactivatesPreviousScheduleInPlace() throws {
+    func testReplacePlanDeactivatesPreviousPlanInPlace() throws {
         let medicine = Medicine(name: "Propranolol")
         let existingDosage = Dosage(amount: "40", unit: .mg)
-        let existing = TreatmentSchedule(medicine: medicine, dosage: existingDosage, timesPerDay: 1)
+        let existing = TreatmentPlan(medicine: medicine, dosage: existingDosage, timesPerDay: 1)
         context.insert(medicine)
         context.insert(existing)
         try context.save()
 
         let replacementDosage = Dosage(amount: "80", unit: .mg)
-        let replacement = TreatmentPlanner.replaceSchedule(for: medicine, dosage: replacementDosage, timesPerDay: 3)
+        let replacement = TreatmentPlanner.replacePlan(for: medicine, dosage: replacementDosage, timesPerDay: 3)
         context.insert(replacement)
         try context.save()
 
         XCTAssertFalse(existing.isActive)
-        let schedules = try context.fetch(FetchDescriptor<TreatmentSchedule>())
-        XCTAssertEqual(schedules.count, 2)
-        let active = schedules.filter { $0.isActive }
+        let plans = try context.fetch(FetchDescriptor<TreatmentPlan>())
+        XCTAssertEqual(plans.count, 2)
+        let active = plans.filter { $0.isActive }
         XCTAssertEqual(active.count, 1)
         XCTAssertEqual(active.first?.timesPerDay, 3)
         XCTAssertEqual(active.first?.dosage, replacementDosage)
@@ -71,14 +71,14 @@ final class TreatmentPlannerTests: XCTestCase {
         let dosage = Dosage(amount: "40", unit: .mg)
 
         let medicine = Medicine(name: "Propranolol", defaultDosage: dosage)
-        let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
+        let plan = TreatmentPlan(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
-        context.insert(schedule)
+        context.insert(plan)
         try context.save()
 
         let log = try XCTUnwrap(TreatmentPlanner.doseLog(
-            for: schedule,
-            progress: progress(for: schedule),
+            for: plan,
+            progress: progress(for: plan),
             now: now,
             calendar: calendar
         ))
@@ -90,32 +90,32 @@ final class TreatmentPlannerTests: XCTestCase {
 
     func testDoseLogIsNilOnceCompleted() throws {
         let medicine = Medicine(name: "Aspirin")
-        let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 1)
+        let plan = TreatmentPlan(medicine: medicine, timesPerDay: 1)
         context.insert(medicine)
-        context.insert(schedule)
+        context.insert(plan)
         try context.save()
 
-        let first = try XCTUnwrap(TreatmentPlanner.doseLog(for: schedule, progress: progress(for: schedule)))
+        let first = try XCTUnwrap(TreatmentPlanner.doseLog(for: plan, progress: progress(for: plan)))
         context.insert(first)
         try context.save()
 
-        XCTAssertNil(TreatmentPlanner.doseLog(for: schedule, progress: try progress(for: schedule)))
+        XCTAssertNil(TreatmentPlanner.doseLog(for: plan, progress: try progress(for: plan)))
         XCTAssertEqual(try fetchLogs().count, 1)
     }
 
     // MARK: - Medicine.archive
 
-    func testArchiveDeactivatesActiveSchedules() throws {
+    func testArchiveDeactivatesActivePlans() throws {
         let medicine = Medicine(name: "Propranolol")
-        let schedule = TreatmentSchedule(medicine: medicine, timesPerDay: 2)
+        let plan = TreatmentPlan(medicine: medicine, timesPerDay: 2)
         context.insert(medicine)
-        context.insert(schedule)
+        context.insert(plan)
         try context.save()
 
         medicine.archive()
         try context.save()
 
         XCTAssertTrue(medicine.isArchived)
-        XCTAssertFalse(schedule.isActive)
+        XCTAssertFalse(plan.isActive)
     }
 }

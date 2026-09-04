@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-@Model final class TreatmentSchedule {
+@Model final class TreatmentPlan {
     var medicine: Medicine
     var dosage: Dosage? // nil means use medicine.defaultDosage
     var timesPerDay: Int

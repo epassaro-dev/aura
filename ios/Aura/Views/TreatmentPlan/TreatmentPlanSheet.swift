@@ -2,12 +2,12 @@ import SwiftUI
 import SwiftData
 import OSLog
 
-enum TreatmentScheduleSheetMode {
+enum TreatmentPlanSheetMode {
     case create(Medicine)
-    case edit(TreatmentSchedule)
+    case edit(TreatmentPlan)
 }
 
-struct TreatmentScheduleSheet: View {
+struct TreatmentPlanSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
@@ -16,10 +16,10 @@ struct TreatmentScheduleSheet: View {
     @State private var dosage: Dosage?
 
     let medicine: Medicine
-    let mode: TreatmentScheduleSheetMode
+    let mode: TreatmentPlanSheetMode
     var onSaved: () -> Void = {}
 
-    init(mode: TreatmentScheduleSheetMode, onSaved: @escaping () -> Void) {
+    init(mode: TreatmentPlanSheetMode, onSaved: @escaping () -> Void) {
         self.onSaved = onSaved
         self.mode = mode
 
@@ -27,10 +27,10 @@ struct TreatmentScheduleSheet: View {
         case .create(let medicine):
             self.medicine = medicine
             _dosage = State(initialValue: medicine.defaultDosage)
-        case .edit(let schedule):
-            self.medicine = schedule.medicine
-            _timesPerDay = State(initialValue: schedule.timesPerDay)
-            _dosage = State(initialValue: schedule.dosage ?? medicine.defaultDosage)
+        case .edit(let plan):
+            self.medicine = plan.medicine
+            _timesPerDay = State(initialValue: plan.timesPerDay)
+            _dosage = State(initialValue: plan.dosage ?? medicine.defaultDosage)
         }
     }
 
@@ -42,22 +42,22 @@ struct TreatmentScheduleSheet: View {
                         .font(.headline)
                 }
                 DosageSectionView(title: "Dosage", dosage: $dosage)
-                Section("Daily schedule") {
+                Section("Daily plan") {
                     Stepper(
                         timesPerDay == 1 ? "Once a day" : "\(timesPerDay) times a day",
                         value: $timesPerDay,
                         in: 1...10
                     )
                 }
-                if case .edit(let schedule) = mode {
+                if case .edit(let plan) = mode {
                     Section {
                         Button("Stop treatment", role: .destructive) {
-                            stopTreatment(schedule)
+                            stopTreatment(plan)
                         }
                     }
                 }
             }
-            .navigationTitle("Treatment Schedule")
+            .navigationTitle("Treatment Plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -67,7 +67,7 @@ struct TreatmentScheduleSheet: View {
                     Button("Save", role: .confirm) { save() }
                 }
             }
-            .alert("Couldn't Save Schedule", isPresented: $showSaveError) {
+            .alert("Couldn't Save Plan", isPresented: $showSaveError) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text("Something went wrong while saving. Your changes haven't been stored — please try again.")
@@ -76,20 +76,20 @@ struct TreatmentScheduleSheet: View {
     }
 
     private func save() {
-        context.insert(TreatmentPlanner.replaceSchedule(for: medicine, dosage: dosage, timesPerDay: timesPerDay))
+        context.insert(TreatmentPlanner.replacePlan(for: medicine, dosage: dosage, timesPerDay: timesPerDay))
         do {
             try context.save()
             dismiss()
             onSaved()
         } catch {
-            Logger.persistence.error("Failed to save treatment schedule: \(String(describing: error), privacy: .public)")
+            Logger.persistence.error("Failed to save treatment plan: \(String(describing: error), privacy: .public)")
             context.rollback()
             showSaveError = true
         }
     }
 
-    private func stopTreatment(_ schedule: TreatmentSchedule) {
-        schedule.stop()
+    private func stopTreatment(_ plan: TreatmentPlan) {
+        plan.stop()
         do {
             try context.save()
             dismiss()
@@ -104,12 +104,12 @@ struct TreatmentScheduleSheet: View {
 
 #Preview("Create", traits: .modifier(MedicinePreviewData())) {
     QueryPreview { (medicine: Medicine) in
-        TreatmentScheduleSheet(mode: .create(medicine)) { }
+        TreatmentPlanSheet(mode: .create(medicine)) { }
     }
 }
 
-#Preview("Edit", traits: .modifier(TreatmentSchedulePreviewData())) {
-    QueryPreview { (schedule: TreatmentSchedule) in
-        TreatmentScheduleSheet(mode: .edit(schedule)) { }
+#Preview("Edit", traits: .modifier(TreatmentPlanPreviewData())) {
+    QueryPreview { (plan: TreatmentPlan) in
+        TreatmentPlanSheet(mode: .edit(plan)) { }
     }
 }
