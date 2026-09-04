@@ -13,7 +13,7 @@ struct ContentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 SleepSectionView(day: today, nextDay: tomorrow)
-                MedicationSectionView(day: today, nextDay: tomorrow)
+                TreatmentPlanSectionView(day: today, nextDay: tomorrow)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()

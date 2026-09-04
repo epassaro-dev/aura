@@ -1,18 +1,18 @@
 import Foundation
 import SwiftData
 
-/// Derived, display-ready view of today's treatment schedules and dose logs.
+/// Derived, display-ready view of today's treatment plans and dose logs.
 struct MedicationProgress {
-    let schedules: [TreatmentSchedule]
+    let plans: [TreatmentPlan]
     let logs: [MedicineLog]
 
-    func takenCount(for schedule: TreatmentSchedule) -> Int {
-        let medicine = schedule.medicine
+    func takenCount(for plan: TreatmentPlan) -> Int {
+        let medicine = plan.medicine
         let medicineID = medicine.persistentModelID
         return logs.filter { $0.medicine.persistentModelID == medicineID }.count
     }
 
-    func isCompleted(for schedule: TreatmentSchedule) -> Bool {
-        takenCount(for: schedule) >= schedule.timesPerDay
+    func isCompleted(for plan: TreatmentPlan) -> Bool {
+        takenCount(for: plan) >= plan.timesPerDay
     }
 }

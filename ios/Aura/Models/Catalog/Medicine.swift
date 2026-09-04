@@ -12,8 +12,8 @@ import SwiftData
     @Relationship(deleteRule: .deny, inverse: \HeadacheMedicineLog.medicine)
     var headacheMedicineLogs: [HeadacheMedicineLog] = []
 
-    @Relationship(deleteRule: .deny, inverse: \TreatmentSchedule.medicine)
-    var schedules: [TreatmentSchedule] = []
+    @Relationship(deleteRule: .deny, inverse: \TreatmentPlan.medicine)
+    var plans: [TreatmentPlan] = []
 
     init(name: String, sfSymbol: String = "pills.fill", isArchived: Bool = false, defaultDosage: Dosage? = nil) {
         self.name = name
@@ -24,12 +24,12 @@ import SwiftData
 }
 
 extension Medicine {
-    /// Soft-deletes the medicine and retires any active treatment schedule with it,
+    /// Soft-deletes the medicine and retires any active treatment plan with it,
     /// so archived medicines disappear from the daily plan while their logs remain.
     func archive() {
         isArchived = true
-        for schedule in schedules where schedule.isActive {
-            schedule.stop()
+        for plan in plans where plan.isActive {
+            plan.stop()
         }
     }
 }
