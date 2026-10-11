@@ -11,14 +11,15 @@ struct MedicineCatalogSheet: View {
 
     @State private var showAddMedicine = false
     @State private var editingEntry: Medicine?
-    @State private var selectedMedicine: Medicine?
+
+    var onSelect: (Medicine) -> Void
 
     var body: some View {
         NavigationStack {
             List {
                 ForEach(medicines) { medicine in
                     Button {
-                        selectedMedicine = medicine
+                        onSelect(medicine)
                     } label: {
                         HStack {
                             Label(medicine.name, systemImage: medicine.sfSymbol)
@@ -61,11 +62,6 @@ struct MedicineCatalogSheet: View {
             .sheet(item: $editingEntry) { medicine in
                 MedicineSheet(mode: .edit(medicine))
             }
-            .sheet(item: $selectedMedicine) { medicine in
-                TreatmentPlanSheet(mode: .create(medicine)) {
-                    dismiss()
-                }
-            }
         }
     }
 
@@ -80,9 +76,9 @@ struct MedicineCatalogSheet: View {
 }
 
 #Preview("Empty", traits: .modifier(EmptyPreviewData())) {
-    MedicineCatalogSheet()
+    MedicineCatalogSheet(onSelect: { _ in })
 }
 
 #Preview("With medicines", traits: .modifier(MedicinePreviewData())) {
-    MedicineCatalogSheet()
+    MedicineCatalogSheet(onSelect: { _ in })
 }
