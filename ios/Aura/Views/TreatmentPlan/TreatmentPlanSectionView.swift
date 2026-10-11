@@ -9,8 +9,7 @@ struct TreatmentPlanSectionView: View {
     private var plans: [TreatmentPlan]
     @Query private var todayLogs: [MedicineLog]
 
-    @State private var showCatalog = false
-    @State private var editingPlan: TreatmentPlan?
+    @State private var showPlanManagement = false
 
     private var progress: MedicationProgress {
         MedicationProgress(plans: plans, logs: todayLogs)
@@ -24,11 +23,21 @@ struct TreatmentPlanSectionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Medications")
-                .font(.headline)
+            HStack {
+                Text("Medications")
+                    .font(.headline)
+                if !plans.isEmpty {
+                    Spacer()
+                    Button {
+                        showPlanManagement = true
+                    } label: {
+                        Label("Edit Plans", systemImage: "pencil")
+                    }
+                }
+            }
             if plans.isEmpty {
                 Button("Set up treatment plan") {
-                    showCatalog = true
+                    showPlanManagement = true
                 }
                 .buttonStyle(.borderedProminent)
             } else {
@@ -37,11 +46,8 @@ struct TreatmentPlanSectionView: View {
                 }
             }
         }
-        .sheet(isPresented: $showCatalog) {
-            MedicineCatalogSheet()
-        }
-        .sheet(item: $editingPlan) { plan in
-            TreatmentPlanSheet(mode: .edit(plan)) { }
+        .sheet(isPresented: $showPlanManagement) {
+            TreatmentPlanManagementSheet()
         }
     }
 
@@ -53,8 +59,7 @@ struct TreatmentPlanSectionView: View {
                 .foregroundStyle(.tint)
                 .frame(width: 32)
             VStack(alignment: .leading, spacing: 2) {
-                let dosageString = plan.dosage?.asString() ?? plan.medicine.defaultDosage?.asString() ?? ""
-                Text("\(plan.medicine.name) \(dosageString)")
+                Text("\(plan.medicine.name) \(plan.dosageString())")
                     .font(.subheadline)
                     .fontWeight(.medium)
                 Text("\(progress.takenCount(for: plan)) of \(plan.timesPerDay) taken today")
@@ -74,18 +79,6 @@ struct TreatmentPlanSectionView: View {
             }
         }
         .padding(.vertical, 4)
-        .contextMenu {
-            Button {
-                editingPlan = plan
-            } label: {
-                Label("Edit", systemImage: "pencil")
-            }
-            Button(role: .destructive) {
-                stopTreatment(plan)
-            } label: {
-                Label("Stop treatment", systemImage: "trash")
-            }
-        }
     }
 
     private func recordDose(for plan: TreatmentPlan) {
@@ -95,16 +88,6 @@ struct TreatmentPlanSectionView: View {
             try context.save()
         } catch {
             Logger.persistence.error("Failed to record dose: \(String(describing: error), privacy: .public)")
-        }
-    }
-
-    private func stopTreatment(_ plan: TreatmentPlan) {
-        plan.stop()
-        do {
-            try context.save()
-        } catch {
-            Logger.persistence.error("Failed to stop treatment: \(String(describing: error), privacy: .public)")
-            context.rollback()
         }
     }
 }

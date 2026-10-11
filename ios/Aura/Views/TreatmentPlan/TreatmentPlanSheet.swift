@@ -17,10 +17,8 @@ struct TreatmentPlanSheet: View {
 
     let medicine: Medicine
     let mode: TreatmentPlanSheetMode
-    var onSaved: () -> Void = {}
 
-    init(mode: TreatmentPlanSheetMode, onSaved: @escaping () -> Void) {
-        self.onSaved = onSaved
+    init(mode: TreatmentPlanSheetMode) {
         self.mode = mode
 
         switch mode {
@@ -80,7 +78,6 @@ struct TreatmentPlanSheet: View {
         do {
             try context.save()
             dismiss()
-            onSaved()
         } catch {
             Logger.persistence.error("Failed to save treatment plan: \(String(describing: error), privacy: .public)")
             context.rollback()
@@ -93,7 +90,6 @@ struct TreatmentPlanSheet: View {
         do {
             try context.save()
             dismiss()
-            onSaved()
         } catch {
             Logger.persistence.error("Failed to stop treatment: \(String(describing: error), privacy: .public)")
             context.rollback()
@@ -104,12 +100,12 @@ struct TreatmentPlanSheet: View {
 
 #Preview("Create", traits: .modifier(MedicinePreviewData())) {
     QueryPreview { (medicine: Medicine) in
-        TreatmentPlanSheet(mode: .create(medicine)) { }
+        TreatmentPlanSheet(mode: .create(medicine))
     }
 }
 
 #Preview("Edit", traits: .modifier(TreatmentPlanPreviewData())) {
     QueryPreview { (plan: TreatmentPlan) in
-        TreatmentPlanSheet(mode: .edit(plan)) { }
+        TreatmentPlanSheet(mode: .edit(plan))
     }
 }

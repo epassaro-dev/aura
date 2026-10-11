@@ -28,4 +28,16 @@ import SwiftData
     func stop() {
         endDate = .now
     }
+
+    func scheduleString() -> String {
+        switch timesPerDay {
+        case 1: String(localized: "Once per day")
+        case 2: String(localized: "Twice per day")
+        default: String(localized: "\(timesPerDay) times per day")
+        }
+    }
+
+    func dosageString() -> String {
+        dosage?.asString() ?? medicine.defaultDosage?.asString() ?? ""
+    }
 }
